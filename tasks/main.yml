@@ -1,5 +1,9 @@
 ---
 
+# Variables setup
+- name: include os-specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+
 # Install the Docker Engine
 - include: docker_engine.yml
 

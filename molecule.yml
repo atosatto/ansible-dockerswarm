@@ -13,6 +13,8 @@ vagrant:
   platforms:
     - name: centos7
       box: centos/7
+    - name: xenial
+      box: bento/ubuntu-16.04
 
   providers:
     - name: virtualbox

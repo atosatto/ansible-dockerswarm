@@ -57,5 +57,5 @@
 
 - name: Install docker-py.
   package:
-    name: python-docker-py
+    name: "{{ docker_py_package }}"
     state: present
