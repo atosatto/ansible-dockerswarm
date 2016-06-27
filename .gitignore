@@ -1,0 +1,5 @@
+.molecule/
+.vagrant/
+tests/.cache/
+
+*.retry
