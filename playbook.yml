@@ -1,12 +1,5 @@
 ---
 
-- name: "Before provisioning."
-  hosts: all
-  tasks:
-    - name: Install python-minimal on Ubuntu Xenial.
-      raw: apt-get install python-minimal
-      when: ansible_distribution_release == 'xenial'
-
 - name: "Provision Docker Swarm Cluster"
   hosts: all
   roles:
