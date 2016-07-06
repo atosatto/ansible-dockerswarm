@@ -1,1 +1,56 @@
 ---
+
+- name: Check if "Swarm Mode" is enabled.
+  shell: "docker info"
+  changed_when: False
+  register: docker_info
+
+- name: Init "Swarm Mode" on the first manager.
+  shell: docker swarm init
+        {% if docker_swarm_secret is defined %}--secret {{ docker_swarm_secret }}{% endif %}
+  when: "docker_info.stdout.find('Swarm: active') == -1
+    and inventory_hostname == groups['docker_swarm_manager'][0]"
+
+- name: Export the IP of the first Swarm manager as a fact.
+  set_fact:
+    docker_manager_ip_address: "{{ docker_host_address }}"
+  run_once: true
+  when: inventory_hostname == groups['docker_swarm_manager'][0]
+
+- name: Join the others Swarm managers.
+  shell: docker swarm join
+        --manager
+        {% if docker_swarm_secret is defined %}--secret {{ docker_swarm_secret }}{% endif %}
+        {{ docker_manager_ip_address }}
+  register: docker_swarm_join
+  failed_when: "'Your node is in the process of joining the cluster but needs to be accepted by existing cluster member.' not in docker_swarm_join.stderr"
+  changed_when: False
+  when: "docker_info.stdout.find('Swarm: active') == -1
+    and docker_info.stdout.find('Swarm: pending') == -1
+    and 'docker_swarm_manager' in group_names
+    and inventory_hostname != groups['docker_swarm_manager'][0]"
+
+- name: Export the pending Swarm managers NodeID.
+  shell: "docker info | grep NodeID | sed -e 's/NodeID://'"
+  register: docker_node_id
+  changed_when: False
+  when: "docker_info.stdout.find('Swarm: active') == -1
+    and 'docker_swarm_manager' in group_names
+    and inventory_hostname != groups['docker_swarm_manager'][0]"
+
+- name: Accept the pending Swarm managers.
+  shell: "docker node accept {{ hostvars[item]['docker_node_id']['stdout'] }}"
+  with_items: "{{ groups['docker_swarm_manager'] }}"
+  run_once: true
+  when: "inventory_hostname == groups['docker_swarm_manager'][0]
+    and hostvars[item]['docker_node_id']['stdout'] is defined"
+
+- name: Join the Swarm nodes.
+  shell: docker swarm join
+        {% if docker_swarm_secret is defined %}--secret {{ docker_swarm_secret }}{% endif %}
+        {{ docker_manager_ip_address }}
+  register: ucp_instance_id
+  changed_when: False
+  when: "docker_info.stdout.find('Swarm: active') == -1
+    and docker_info.stdout.find('Swarm: pending') == -1
+    and 'docker_swarm_node' in group_names"

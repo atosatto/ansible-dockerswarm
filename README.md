@@ -6,6 +6,10 @@ Ansible Role: Docker Swarm
 Setup a Docker Swarm cluster on RHEL/CentOS and Debian/Ubuntu servers
 using the new Docker Engine's "Swarm Mode" (https://docs.docker.com/engine/swarm/).
 
+**Disclaimer:** This role uses the new Docker Engine's "Swarm Mode".
+                Make sure to override the `docker_repo` variable to download the
+                laster docker-engine 1.12 release-candidate.
+
 Requirements
 ------------
 
@@ -35,7 +39,7 @@ Example Playbook
     $ cat inventory
     swarm-01 ansible_ssh_host=172.10.10.1
     swarm-02 ansible_ssh_host=172.10.10.2
-    swarm-03 ansible_ssh_host=172.10.10.2
+    swarm-03 ansible_ssh_host=172.10.10.3
 
     [docker_engine]
     swarm-01
@@ -53,7 +57,8 @@ Example Playbook
     - name: "Provision Docker Swarm Cluster"
       hosts: all
       roles:
-        - role: ansible-dockerswarm
+        - { role: ansible-dockerswarm,
+            docker_repo: testing }
 
 License
 -------

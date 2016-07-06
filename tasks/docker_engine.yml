@@ -1,11 +1,5 @@
 ---
 
-- name: Import Docker RPM public key.
-  rpm_key:
-    key: "{{ docker_pubkey }}"
-    state: present
-  when: ansible_os_family == 'RedHat'
-
 - name: Import Docker APT public key.
   apt_key:
     url: "{{ docker_pubkey }}"
@@ -35,6 +29,8 @@
     name: docker
     description: Docker Repository
     baseurl: "{{ docker_yum_repo }}"
+    gpgkey: "{{ docker_yum_gpgkey }}"
+    gpgcheck: yes
   when: ansible_os_family == 'RedHat'
 
 - name: Add the APT Docker repository.

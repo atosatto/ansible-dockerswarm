@@ -3,3 +3,5 @@
 docker_repo: main
 # docker_repo: testing
 # docker_repo: experimental
+
+# docker_swarm_secret: "supersecret"

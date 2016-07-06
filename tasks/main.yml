@@ -8,4 +8,4 @@
 - include: docker_engine.yml
 
 # Setup the Docker Swarm Cluster
-# - include: swarm_cluster.yml
+- include: swarm_cluster.yml

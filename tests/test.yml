@@ -1,12 +1,6 @@
 ---
 
 - hosts: all
-  tasks:
-    - name: Install python-minimal on Ubuntu Xenial.
-      raw: apt-get install python-minimal
-      when: ansible_distribution_release == 'xenial'
-
-- hosts: all
   roles:
     - { role: ansible-dockerswarm,
         docker_repo: testing }
