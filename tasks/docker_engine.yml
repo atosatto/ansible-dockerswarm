@@ -40,7 +40,7 @@
     filename: 'docker'
   when: ansible_os_family == 'Debian'
 
-- name: Install Docker Engine.
+- name: Install the Docker Engine.
   package:
     name: docker-engine
     state: present
