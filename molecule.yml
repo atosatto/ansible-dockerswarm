@@ -4,7 +4,7 @@ ansible:
 #  verbose: true
   playbook: tests/test.yml
   extra_vars:
-    docker_host_address: "{{ ansible_all_ipv4_addresses | select('match', '172.28.128.*') | first }}"
+    docker_swarm_addr: "{{ ansible_all_ipv4_addresses | select('match', '172.28.128.*') | first }}"
 
 # configuration options for the internal call to vagrant
 vagrant:
@@ -35,6 +35,16 @@ vagrant:
       options:
         append_platform_to_hostname: yes
     - name: ansible-dockerswarm-02
+      ansible_groups:
+        - docker_engine
+        - docker_swarm_manager
+      interfaces:
+        - network_name: private_network
+          type: dhcp
+          auto_config: true
+      options:
+        append_platform_to_hostname: yes
+    - name: ansible-dockerswarm-03
       ansible_groups:
         - docker_engine
         - docker_swarm_node

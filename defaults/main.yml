@@ -4,4 +4,6 @@ docker_repo: main
 # docker_repo: testing
 # docker_repo: experimental
 
+docker_swarm_addr: 0.0.0.0
+docker_swarm_port: 2377
 # docker_swarm_secret: "supersecret"
