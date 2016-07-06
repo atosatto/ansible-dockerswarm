@@ -7,8 +7,8 @@ Setup a Docker Swarm cluster on RHEL/CentOS and Debian/Ubuntu servers
 using the new Docker Engine's "Swarm Mode" (https://docs.docker.com/engine/swarm/).
 
 **Disclaimer:** This role uses the new Docker Engine's "Swarm Mode".
-                Make sure to override the `docker_repo` variable to download the
-                laster docker-engine 1.12 release-candidate.
+                Make sure to set the value of the `docker_repo` variable to
+                `testing` to download the laster docker-engine `1.12.0-rc`.
 
 Requirements
 ------------
@@ -36,7 +36,7 @@ Special case `0.0.0.0` will be replaced with default route ip (see https://githu
 
 Listening port where the raft APIs will be exposed.
 
-    docker_swarm_secret: "supersecret"
+    # docker_swarm_secret: "supersecret"
 
 Optional secret for node acceptance.
 
