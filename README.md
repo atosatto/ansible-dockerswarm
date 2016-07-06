@@ -27,7 +27,7 @@ Available variables are listed below, along with default values (see defaults/ma
 The repo from which install Docker. Override the default to install
 testing or experimental docker builds.
 
-    docker_swarm_addr: "{{ ansible_default_ipv4["address"] }}"
+    docker_swarm_addr: "{{ ansible_default_ipv4['address'] }}"
 
 Listening address where the raft APIs will be exposed.
 Special case `0.0.0.0` will be replaced with default route ip (see https://github.com/docker/docker/issues/23784 for more details).
