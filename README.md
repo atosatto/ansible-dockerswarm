@@ -57,7 +57,7 @@ Example Playbook
     [docker_swarm_manager]
     swarm-01
 
-    [docker_swarm_node]
+    [docker_swarm_worker]
     swarm-02
     swarm-03
 

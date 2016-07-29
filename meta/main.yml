@@ -22,6 +22,7 @@ galaxy_info:
         - jessie
   galaxy_tags:
     - docker
+    - swarm
     - docker-swarm
     - docker-cluster
 

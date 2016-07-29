@@ -19,13 +19,20 @@
   register: docker_worker_token
   when: inventory_hostname == groups['docker_swarm_manager'][0]
 
+- name: Get the manager join-token.
+  shell: docker swarm join-token -q manager
+  changed_when: False
+  run_once: true
+  register: docker_manager_token
+  when: inventory_hostname == groups['docker_swarm_manager'][0]
+
 - name: Export the address of the first Swarm manager as a fact.
   set_fact:
     docker_manager_address: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
   run_once: true
   when: inventory_hostname == groups['docker_swarm_manager'][0]
 
-- name: Join the Swarm nodes.
+- name: Join the pending Swarm worker nodes.
   shell: docker swarm join
         --listen-addr {{ docker_swarm_addr }}:{{ docker_swarm_port }}
         --token "{{ docker_worker_token.stdout }}"
@@ -33,19 +40,15 @@
   changed_when: False
   when: "docker_info.stdout.find('Swarm: active') == -1
     and docker_info.stdout.find('Swarm: pending') == -1
-    and inventory_hostname != groups['docker_swarm_manager'][0]"
+    and 'docker_swarm_worker' in group_names"
 
-- name: Export the pending Swarm managers NodeID.
-  shell: "docker info | grep NodeID | sed -e 's/NodeID://'"
-  register: docker_node_id
+- name: Join the pending Swarm manager nodes.
+  shell: docker swarm join
+        --listen-addr {{ docker_swarm_addr }}:{{ docker_swarm_port }}
+        --token "{{ docker_manager_token.stdout }}"
+        {{ docker_manager_address }}
   changed_when: False
-  when: "'docker_swarm_manager' in group_names
-    and docker_info.stdout is defined
-    and docker_info.stdout.find('Is Manager: true') == -1"
-
-- name: Accept the pending Swarm managers.
-  shell: docker node promote {{ hostvars[item]['docker_node_id']['stdout'] }}
-  with_items: "{{ groups['docker_swarm_manager'] }}"
-  run_once: true
-  when: "inventory_hostname == groups['docker_swarm_manager'][0]
-    and hostvars[item]['docker_node_id']['stdout'] is defined"
+  when: "docker_info.stdout.find('Swarm: active') == -1
+    and docker_info.stdout.find('Swarm: pending') == -1
+    and 'docker_swarm_manager' in group_names
+    and inventory_hostname == groups['docker_swarm_manager'][0]"

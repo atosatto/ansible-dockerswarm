@@ -47,7 +47,7 @@ vagrant:
     - name: ansible-dockerswarm-03
       ansible_groups:
         - docker_engine
-        - docker_swarm_node
+        - docker_swarm_worker
       interfaces:
         - network_name: private_network
           type: dhcp
