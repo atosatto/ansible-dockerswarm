@@ -36,11 +36,6 @@ Special case `0.0.0.0` will be replaced with default route ip (see https://githu
 
 Listening port where the raft APIs will be exposed.
 
-    # docker_swarm_secret: "supersecret"
-
-Optional secret for node acceptance.
-
-
 Dependencies
 ------------
 
