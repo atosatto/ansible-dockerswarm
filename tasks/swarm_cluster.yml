@@ -7,8 +7,8 @@
 
 - name: Init "Swarm Mode" on the first manager.
   shell: docker swarm init
-        --advertise-addr {{ docker_swarm_addr }}
         --listen-addr {{ docker_swarm_addr }}:{{ docker_swarm_port }}
+        --advertise-addr {{ docker_swarm_addr }}
   when: "docker_info.stdout.find('Swarm: active') == -1
     and inventory_hostname == groups['docker_swarm_manager'][0]"
 
@@ -34,7 +34,8 @@
 
 - name: Join the pending Swarm worker nodes.
   shell: docker swarm join
-        --advertise-addr {{ docker_swarm_addr }}:{{ docker_swarm_port }}
+        --listen-addr {{ docker_swarm_addr }}:{{ docker_swarm_port }}
+        --advertise-addr {{ docker_swarm_addr }}
         --token "{{ docker_worker_token.stdout }}"
         {{ docker_manager_address }}
   changed_when: False
@@ -44,7 +45,8 @@
 
 - name: Join the pending Swarm manager nodes.
   shell: docker swarm join
-        --advertise-addr {{ docker_swarm_addr }}:{{ docker_swarm_port }}
+        --listen-addr {{ docker_swarm_addr }}:{{ docker_swarm_port }}
+        --advertise-addr {{ docker_swarm_addr }}
         --token "{{ docker_manager_token.stdout }}"
         {{ docker_manager_address }}
   changed_when: False
