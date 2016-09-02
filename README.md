@@ -60,7 +60,7 @@ Example Playbook
     - name: "Provision Docker Swarm Cluster"
       hosts: all
       roles:
-        - { role: ansible-dockerswarm }
+        - { role: atosatto.docker-swarm }
 
 License
 -------
