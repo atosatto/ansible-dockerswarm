@@ -29,9 +29,15 @@
   when: "'docker_swarm_manager' in group_names
     and inventory_hostname != groups['docker_swarm_manager'][0]"
 
-- name: Export the address of the first Swarm manager as a fact.
+- name: Declare the address of the first Swarm manager as a fact.
   set_fact:
-    docker_manager_address: "{{ hostvars[groups['docker_swarm_manager'][0]]['docker_swarm_addr'] }}:{{ docker_swarm_port }}"
+    docker_manager_address: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
+  when: "inventory_hostname == groups['docker_swarm_manager'][0]"
+
+- name: Distribute the address of the first Swarm manager fact.
+  set_fact:
+    docker_manager_address: "{{hostvars[groups['docker_swarm_manager'][0]]['docker_manager_address'] }}"
+  when: "inventory_hostname != groups['docker_swarm_manager'][0]"
 
 - name: Join the pending Swarm worker nodes.
   shell: docker swarm join
