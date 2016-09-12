@@ -15,22 +15,29 @@
 - name: Get the worker join-token.
   shell: docker swarm join-token -q worker
   changed_when: False
-  run_once: true
   register: docker_worker_token
-  when: inventory_hostname == groups['docker_swarm_manager'][0]
+  delegate_to: "{{ groups['docker_swarm_manager'][0] }}"
+  delegate_facts: True
+  when: "'docker_swarm_worker' in group_names"
 
 - name: Get the manager join-token.
   shell: docker swarm join-token -q manager
   changed_when: False
-  run_once: true
   register: docker_manager_token
-  when: inventory_hostname == groups['docker_swarm_manager'][0]
+  delegate_to: "{{ groups['docker_swarm_manager'][0] }}"
+  delegate_facts: True
+  when: "'docker_swarm_manager' in group_names
+    and inventory_hostname != groups['docker_swarm_manager'][0]"
 
-- name: Export the address of the first Swarm manager as a fact.
+- name: Declare the address of the first Swarm manager as a fact.
   set_fact:
     docker_manager_address: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
-  run_once: true
-  when: inventory_hostname == groups['docker_swarm_manager'][0]
+  when: "inventory_hostname == groups['docker_swarm_manager'][0]"
+
+- name: Distribute the fact containing address of the first Swarm manager.
+  set_fact:
+    docker_manager_address: "{{hostvars[groups['docker_swarm_manager'][0]]['docker_manager_address'] }}"
+  when: "inventory_hostname != groups['docker_swarm_manager'][0]"
 
 - name: Join the pending Swarm worker nodes.
   shell: docker swarm join
