@@ -4,6 +4,9 @@ docker_repo: main
 # docker_repo: testing
 # docker_repo: experimental
 
+# Extra packages that have to installed together with Docker
+docker_dependencies: "{{ default_docker_dependencies }}"
+
 docker_swarm_addr: "{{ ansible_default_ipv4['address'] }}"
 docker_swarm_port: 2377
 # docker_swarm_secret: "supersecret"

@@ -11,9 +11,9 @@ vagrant:
 
   # molecule's --platform option will look for these names
   platforms:
-    - name: centos7
+    - name: centos-7
       box: centos/7
-    - name: xenial
+    - name: ubuntu-16.04
       box: bento/ubuntu-16.04
 
   providers:

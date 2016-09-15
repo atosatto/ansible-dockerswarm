@@ -23,6 +23,13 @@ Available variables are listed below, along with default values (see defaults/ma
 The repo from which install Docker. Override the default to install
 testing or experimental docker builds.
 
+    docker_dependencies: "{{ default_docker_dependencies }}"
+
+Extra packages that have to installed together with Docker.
+The value of `default_docker_dependencies` depends on the target OS family.
+> **NB**: If you are installing Docker on a Raspberry running Raspbian or any other Debian-like OS make sure to set
+`docker_dependencies: [ ]` otherwise Ansible will fail because the `linux-image-extra-virtual` package is not available for the `arm` architecture (see issue #4).
+
     docker_swarm_addr: "{{ ansible_default_ipv4['address'] }}"
 
 Listening address where the raft APIs will be exposed.
