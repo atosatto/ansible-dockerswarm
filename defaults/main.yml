@@ -7,6 +7,10 @@ docker_repo: main
 # Extra packages that have to installed together with Docker
 docker_dependencies: "{{ default_docker_dependencies }}"
 
+# Switches disabling the docker-engine or swarm-mode setup.
+skip_engine: False
+skip_swarm: False
+
 docker_swarm_addr: "{{ ansible_default_ipv4['address'] }}"
 docker_swarm_port: 2377
 # docker_swarm_secret: "supersecret"

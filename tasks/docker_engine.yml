@@ -45,13 +45,13 @@
     name: docker-engine
     state: present
 
+- name: Install docker-py.
+  package:
+    name: "{{ docker_py_package }}"
+    state: present
+
 - name: Enable the Docker daemon as a service and start it.
   service:
     name: docker.service
     state: started
     enabled: yes
-
-- name: Install docker-py.
-  package:
-    name: "{{ docker_py_package }}"
-    state: present

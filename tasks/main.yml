@@ -6,6 +6,8 @@
 
 # Install the Docker Engine
 - include: docker_engine.yml
+  when: not skip_engine
 
 # Setup the Docker Swarm Cluster
 - include: swarm_cluster.yml
+  when: not skip_swarm
