@@ -2,5 +2,4 @@
 
 - hosts: all
   roles:
-    - { role: ansible-dockerswarm,
-        skip_swarm: True }
+    - { role: ansible-dockerswarm }
