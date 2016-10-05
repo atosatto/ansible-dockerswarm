@@ -1,6 +1,8 @@
 ---
 
-docker_pubkey: "https://sks-keyservers.net/pks/lookup?op=get&search=0x58118E89F3A912897C070ADBF76221572C52609D"
+docker_pubkey_id: "0x58118e89f3a912897c070adbf76221572c52609d"
+docker_pubkey_url: "https://sks-keyservers.net/pks/lookup?op=get&search={{ docker_pubkey_id }}"
+
 docker_apt_repo: "deb https://apt.dockerproject.org/repo {{ ansible_distribution | lower }}-{{ ansible_distribution_release }} {{ docker_repo }}"
 
 docker_yum_repo: "https://yum.dockerproject.org/repo/{{ docker_repo }}/centos/7"

@@ -2,4 +2,6 @@
 
 default_docker_dependencies: [ ]
 
-docker_py_package: python-docker-py
+python_pip_packages:
+  - epel-release
+  - python-pip
