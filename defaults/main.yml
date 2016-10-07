@@ -11,6 +11,10 @@ docker_dependencies: "{{ default_docker_dependencies }}"
 skip_engine: False
 skip_swarm: False
 
-docker_swarm_addr: "{{ ansible_default_ipv4['address'] }}"
+# Instead of {{ ansible_default_ipv4['alias'] }} you can set any interface, that is listened by docker engine.
+# E.g.
+# docker_swarm_interface: "eth1"
+docker_swarm_interface: "{{ ansible_default_ipv4['alias'] }}"
+docker_swarm_addr: "{{ hostvars[inventory_hostname]['ansible_' + docker_swarm_interface]['ipv4']['address'] }}"
 docker_swarm_port: 2377
 # docker_swarm_secret: "supersecret"
