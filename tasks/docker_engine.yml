@@ -2,7 +2,8 @@
 
 - name: Import Docker APT public key.
   apt_key:
-    url: "{{ docker_pubkey }}"
+    url: "{{ docker_pubkey_url }}"
+    id: "{{ docker_pubkey_id }}"
     state: present
   when: ansible_os_family == 'Debian'
 
@@ -46,12 +47,12 @@
     state: present
 
 - name: Install docker-py.
-  package:
-    name: "{{ docker_py_package }}"
+  pip:
+    name: docker-py
     state: present
 
 - name: Enable the Docker daemon as a service and start it.
   service:
-    name: docker.service
+    name: docker
     state: started
     enabled: yes

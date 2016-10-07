@@ -4,6 +4,29 @@
 - name: Include os-specific variables.
   include_vars: "{{ ansible_os_family }}.yml"
 
+# with_indexed_items is required as a workaround for this issue:
+# https://github.com/ansible/ansible-modules-core/issues/1178
+- name: Install python-pip.
+  package:
+    name: "{{ item.1 }}"
+    state: present
+  with_indexed_items: "{{ python_pip_packages }}"
+
+# There extra pip dependencies are needed to add SSL SNI support to
+# Python version prior to 2.7.9. SNI support is needed by the Ansible
+# apt_key module.
+- name: Install the Python SNI support packages.
+  pip:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - pyopenssl
+    - ndg-httpsclient
+    - pyasn1
+  when: ansible_os_family == 'Debian'
+    and ansible_python_version | version_compare('2.6.0', '>=')
+    and ansible_python_version | version_compare('2.7.9', '<')
+
 # Install the Docker Engine
 - include: docker_engine.yml
   when: not skip_engine
