@@ -11,6 +11,7 @@
     name: "{{ item.1 }}"
     state: present
   with_indexed_items: "{{ python_pip_packages }}"
+  become: true
 
 # There extra pip dependencies are needed to add SSL SNI support to
 # Python version prior to 2.7.9. SNI support is needed by the Ansible
@@ -23,6 +24,7 @@
     - pyopenssl
     - ndg-httpsclient
     - pyasn1
+  become: true
   when: ansible_os_family == 'Debian'
     and ansible_python_version | version_compare('2.6.0', '>=')
     and ansible_python_version | version_compare('2.7.9', '<')
