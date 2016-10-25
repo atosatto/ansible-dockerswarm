@@ -4,6 +4,16 @@
 - name: Include os-specific variables.
   include_vars: "{{ ansible_os_family }}.yml"
 
+# Update cache - debian
+- name: Update cache
+  apt: update_cache=yes
+  when: ansible_os_family == 'Debian'
+
+# Update cache - RedHat
+- name: Update cache
+  yum: update_cache=yes
+  when: ansible_os_family == 'RedHat'
+
 # with_indexed_items is required as a workaround for this issue:
 # https://github.com/ansible/ansible-modules-core/issues/1178
 - name: Install python-pip.
