@@ -49,6 +49,8 @@
 - name: Install docker-py.
   pip:
     name: docker-py
+    # Specified version because of https://github.com/ansible/ansible/issues/17495
+    version: 1.9.0
     state: present
 
 - name: Enable the Docker daemon as a service and start it.
