@@ -53,9 +53,9 @@ Example Playbook
 ----------------
 
     $ cat inventory
-    swarm-01 ansible_ssh_host=172.10.10.1
-    swarm-02 ansible_ssh_host=172.10.10.2
-    swarm-03 ansible_ssh_host=172.10.10.3
+    swarm-01 ansible_host=172.10.10.1
+    swarm-02 ansible_host=172.10.10.2
+    swarm-03 ansible_host=172.10.10.3
 
     [docker_engine]
     swarm-01

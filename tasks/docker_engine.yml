@@ -5,18 +5,21 @@
     url: "{{ docker_pubkey_url }}"
     id: "{{ docker_pubkey_id }}"
     state: present
+  become: true
   when: ansible_os_family == 'Debian'
 
 - name: Install yum-utils if necessary.
   yum:
     name: yum-utils
     state: present
+  become: true
   when: ansible_os_family == 'RedHat'
 
 - name: Install apt-transport-https if necessary.
   apt:
     name: apt-transport-https
     state: present
+  become: true
   when: ansible_os_family == 'Debian'
 
 - name: Add the YUM Docker repository.
@@ -26,6 +29,7 @@
     baseurl: "{{ docker_yum_repo }}"
     gpgkey: "{{ docker_yum_gpgkey }}"
     gpgcheck: yes
+  become: true
   when: ansible_os_family == 'RedHat'
 
 - name: Add the APT Docker repository.
@@ -33,26 +37,31 @@
     repo: "{{ docker_apt_repo }}"
     state: present
     filename: 'docker'
+  become: true
   when: ansible_os_family == 'Debian'
 
 - name: Install Docker dependencies.
   package:
     name: "{{ item }}"
     state: present
+  become: true
   with_items: "{{ docker_dependencies }}"
 
 - name: Install the Docker Engine.
   package:
     name: docker-engine
     state: present
+  become: true
 
 - name: Install docker-py.
   pip:
     name: docker-py
     state: present
+  become: true
 
 - name: Enable the Docker daemon as a service and start it.
   service:
     name: docker
     state: started
     enabled: yes
+  become: true
