@@ -7,3 +7,9 @@ docker_apt_repo: "deb https://apt.dockerproject.org/repo {{ ansible_distribution
 
 docker_yum_repo: "https://yum.dockerproject.org/repo/{{ docker_repo }}/centos/7"
 docker_yum_gpgkey: "https://yum.dockerproject.org/gpg"
+
+# Name of the Docker group
+docker_group: "docker"
+
+# Name of the SSH Deamon
+ssh_daemon: sshd

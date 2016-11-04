@@ -30,12 +30,6 @@ The value of `default_docker_dependencies` depends on the target OS family.
 > **NB**: If you are installing Docker on a Raspberry running Raspbian or any other Debian-like OS make sure to set
 `docker_dependencies: [ ]` otherwise Ansible will fail because the `linux-image-extra-virtual` package is not available for the `arm` architecture (see issue #4).
 
-    skip_engine: False
-    skip_swarm: False
-
-Setting `skip_engine: True` will make the role skip the installation of `docker-engine`.
-If you want to use this role to just install `docker-engine` without enabling `swarm-mode` set `skip_swarm: True`.
-
     docker_swarm_addr: "{{ ansible_default_ipv4['address'] }}"
 
 Listening address where the raft APIs will be exposed.
@@ -43,6 +37,20 @@ Listening address where the raft APIs will be exposed.
     docker_swarm_port: 2377
 
 Listening port where the raft APIs will be exposed.
+
+    docker_admin_users:
+      - "{{ ansible_ssh_user }}"
+
+The list of users that has to be added to the `docker_group` to interact with the Docker daemon.
+**NB**: The users must already exist in the system.
+
+    skip_engine: False
+    skip_group: False
+    skip_swarm: False
+
+Setting `skip_engine: True` will make the role skip the installation of `docker-engine`.
+If you want to use this role to just install `docker-engine` without enabling `swarm-mode` set `skip_swarm: True`.
+To skip the tasks adding the `docker_admin_users` to the `docker_group` set `skip_group: True`.
 
 Dependencies
 ------------
