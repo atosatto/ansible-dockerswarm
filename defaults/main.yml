@@ -14,7 +14,7 @@ docker_swarm_port: 2377
 
 # List of the users in the Docker group
 docker_admin_users:
-  - "{{ ansible_ssh_user }}"
+  - "{{ ansible_user }}"
 
 # Switches disabling the docker-engine or swarm-mode setup.
 skip_engine: False # if true, skip the docker engine installation

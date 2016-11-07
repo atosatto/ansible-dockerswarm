@@ -39,7 +39,7 @@ Listening address where the raft APIs will be exposed.
 Listening port where the raft APIs will be exposed.
 
     docker_admin_users:
-      - "{{ ansible_ssh_user }}"
+      - "{{ ansible_user }}"
 
 The list of users that has to be added to the `docker_group` to interact with the Docker daemon.
 **NB**: The users must already exist in the system.
