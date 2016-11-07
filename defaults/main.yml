@@ -8,8 +8,15 @@ docker_repo: main
 # Extra packages that have to be installed together with Docker
 docker_dependencies: "{{ default_docker_dependencies }}"
 
-# Docker Swarm networking setup
-docker_swarm_addr: "{{ ansible_default_ipv4['address'] }}"
+# Switches disabling the docker-engine or swarm-mode setup.
+skip_engine: False
+skip_swarm: False
+
+# Instead of {{ ansible_default_ipv4['alias'] }} you can set any interface, that is listened by docker engine.
+# E.g.
+# docker_swarm_interface: "eth1"
+docker_swarm_interface: "{{ ansible_default_ipv4['alias'] }}"
+docker_swarm_addr: "{{ hostvars[inventory_hostname]['ansible_' + docker_swarm_interface]['ipv4']['address'] }}"
 docker_swarm_port: 2377
 
 # List of the users in the Docker group
