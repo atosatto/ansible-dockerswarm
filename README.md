@@ -30,9 +30,15 @@ The value of `default_docker_dependencies` depends on the target OS family.
 > **NB**: If you are installing Docker on a Raspberry running Raspbian or any other Debian-like OS make sure to set
 `docker_dependencies: [ ]` otherwise Ansible will fail because the `linux-image-extra-virtual` package is not available for the `arm` architecture (see issue #4).
 
-    docker_swarm_addr: "{{ ansible_default_ipv4['address'] }}"
+    docker_swarm_interface: "{{ ansible_default_ipv4['alias'] }}"
 
-Listening address where the raft APIs will be exposed.
+Setting `docker_swarm_interface` allows you to define which network interface will be used for cluster inter-communication.
+
+    docker_swarm_addr: "{{ hostvars[inventory_hostname]['ansible_' + docker_swarm_interface]['ipv4']['address'] }}"
+
+By default, the ip address for raft API will be taken from desired interface.
+You can setup listening address where the raft APIs will be exposed, overriding
+the `docker_swarm_addr` variable value in your playbook.
 
     docker_swarm_port: 2377
 
