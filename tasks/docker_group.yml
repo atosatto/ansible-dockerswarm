@@ -1,0 +1,18 @@
+---
+
+- name: Add the Docker administrators to the Docker group
+  user:
+    name: "{{ item }}"
+    groups: "{{ docker_group }}"
+    append: true
+  register: addtogroup
+  become: true
+  with_items: "{{ docker_admin_users }}"
+
+# Little hack to make docker group visible from http://stackoverflow.com/a/37337848/1370301
+- name: Kill the ansible_user active SSH connections
+  shell: "sleep 1; pkill -u {{ ansible_user }} {{ ssh_daemon }}"
+  async: 3  # fail after 3 seconds of waiting
+  poll: 2   # wait 2 seconds befor polling the task status
+  when: ansible_user in docker_admin_users
+    and ansible_user in "{{ addtogroup.results | selectattr('changed') | map(attribute='item') | list }}"
