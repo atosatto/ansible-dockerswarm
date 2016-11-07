@@ -52,6 +52,20 @@ Or you can setup listening address where the raft APIs will be exposed, by your 
 
 Listening port where the raft APIs will be exposed.
 
+    docker_admin_users:
+      - "{{ ansible_user }}"
+
+The list of users that has to be added to the `docker_group` to interact with the Docker daemon.
+**NB**: The users must already exist in the system.
+
+    skip_engine: False
+    skip_group: False
+    skip_swarm: False
+
+Setting `skip_engine: True` will make the role skip the installation of `docker-engine`.
+If you want to use this role to just install `docker-engine` without enabling `swarm-mode` set `skip_swarm: True`.
+To skip the tasks adding the `docker_admin_users` to the `docker_group` set `skip_group: True`.
+
 Dependencies
 ------------
 

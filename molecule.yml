@@ -15,6 +15,8 @@ vagrant:
       box: centos/7
     - name: ubuntu-16.04
       box: bento/ubuntu-16.04
+    - name: ubuntu-14.04
+      box: bento/ubuntu-14.04
 
   providers:
     - name: virtualbox
