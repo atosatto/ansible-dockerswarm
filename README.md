@@ -36,9 +36,17 @@ The value of `default_docker_dependencies` depends on the target OS family.
 Setting `skip_engine: True` will make the role skip the installation of `docker-engine`.
 If you want to use this role to just install `docker-engine` without enabling `swarm-mode` set `skip_swarm: True`.
 
+    docker_swarm_interface: "{{ ansible_default_ipv4['alias'] }}"
+
+Setting `docker_swarm_interface` allows you to define which network interface will be used for cluster inter-communication.
+
+    docker_swarm_addr: "{{ hostvars[inventory_hostname]['ansible_' + docker_swarm_interface]['ipv4']['address'] }}"
+
+In this case ip address for raft API will be taken from desired interface:
+
     docker_swarm_addr: "{{ ansible_default_ipv4['address'] }}"
 
-Listening address where the raft APIs will be exposed.
+Or you can setup listening address where the raft APIs will be exposed, by your own.
 
     docker_swarm_port: 2377
 
