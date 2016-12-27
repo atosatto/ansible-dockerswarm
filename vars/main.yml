@@ -1,7 +1,7 @@
 ---
 
 docker_pubkey_id: "58118E89F3A912897C070ADBF76221572C52609D"
-docker_pubkey_server: "hkp://p80.pool.sks-keyservers.net:80"
+docker_pubkey_server: "hkp://ha.pool.sks-keyservers.net:80"
 
 docker_apt_repo: "deb https://apt.dockerproject.org/repo {{ ansible_distribution | lower }}-{{ ansible_distribution_release }} {{ docker_repo }}"
 
