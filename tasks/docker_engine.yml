@@ -2,7 +2,7 @@
 
 - name: Import Docker APT public key.
   apt_key:
-    url: "{{ docker_pubkey_url }}"
+    keyserver: "{{ docker_pubkey_server }}"
     id: "{{ docker_pubkey_id }}"
     state: present
   when: ansible_os_family == 'Debian'
