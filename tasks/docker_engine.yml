@@ -54,14 +54,16 @@
     state: present
   when: ansible_version is defined
     and ansible_version.full | version_compare('2.2.0.0', '<')
+    and not skip_docker_py
 
 - name: Install docker-py
   pip:
     name: docker-py
     state: present
-  when: (ansible_version is defined
+  when: ((ansible_version is defined
     and ansible_version.full | version_compare('2.2.0.0', '>='))
-    or ansible_version is not defined
+    or ansible_version is not defined)
+    and not skip_docker_py
 
 - name: Enable the Docker daemon as a service and start it.
   service:

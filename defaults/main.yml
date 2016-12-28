@@ -8,6 +8,9 @@ docker_repo: main
 # Extra packages that have to be installed together with Docker
 docker_dependencies: "{{ default_docker_dependencies }}"
 
+# PIP packages that have to be installed
+python_pip_packages: "{{ default_python_pip_packages }}"
+
 # You can set any interface, that is listened by docker engine.
 # e.g. docker_swarm_interface: "eth1"
 docker_swarm_interface: "{{ ansible_default_ipv4['interface'] }}"
@@ -22,3 +25,4 @@ docker_admin_users:
 skip_engine: False # if true, skip the docker engine installation
 skip_group: False  # if true, does not add the docker_admin_users to the docker_group_name
 skip_swarm: False  # if true, skip the swarm setup
+skip_docker_py: False # if true, skip the docker-py
