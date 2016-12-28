@@ -15,6 +15,7 @@
   shell: "sleep 1; pkill -u {{ ansible_user }} {{ ssh_daemon }}"
   async: 3  # fail after 3 seconds of waiting
   poll: 2   # wait 2 seconds befor polling the task status
+  failed_when: False  # suceed even if the command fails
   when: ansible_user is defined
     and ansible_user in docker_admin_users
     and ansible_user in "{{ addtogroup.results | selectattr('changed') | map(attribute='item') | list }}"
