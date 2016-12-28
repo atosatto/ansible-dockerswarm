@@ -1,29 +1,27 @@
 ---
+
 language: python
 python: "2.7"
 
 # Use the new container infrastructure
-sudo: false
+sudo: required
 
-# Install ansible
-addons:
-  apt:
-    packages:
-    - python-pip
+# Enable the docker service
+services:
+  - docker
 
+# Ensure docker is updated
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine
+
+# Install molecule
 install:
-  # Install ansible
-  - pip install ansible
+  - pip install molecule
 
-  # Check ansible version
-  - ansible --version
-
-  # Create ansible.cfg with correct roles_path
-  - printf '[defaults]\nroles_path=../' >ansible.cfg
-
+# Execute the tests using the molecule docker driver
 script:
-  # Basic role syntax check
-  - ansible-playbook tests/test.yml -i tests/inventory --syntax-check
+  - molecule test --driver docker
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/

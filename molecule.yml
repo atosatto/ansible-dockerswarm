@@ -3,10 +3,40 @@
 ansible:
 #  verbose: true
   playbook: tests/test.yml
-  extra_vars:
-    docker_swarm_addr: "{{ ansible_all_ipv4_addresses | select('match', '172.28.128.*') | first }}"
+  group_vars:
+    vbox_hosts: # this group is needed to override the default ansible variables when running molecule with the virtualbox driver
+      # While the names of the net ifaces changes, the internal subnet is consistent in each platform
+      - docker_swarm_addr: "{{ ansible_all_ipv4_addresses | select('match', '172.28.128.*') | first }}"
+  raw_env_vars:
+    # Fix an issue with the docker driver
+    ANSIBLE_REMOTE_TMP: "/tmp"
 
-# configuration options for the internal call to vagrant
+# configuration options for the internal docker driver (used in CI)
+docker:
+  containers:
+    - name: ansible-dockerswarm-01
+      ansible_groups:
+        - docker_engine
+        - docker_swarm_manager
+      image: ubuntu
+      image_version: 16.04
+      privileged: True
+    - name: ansible-dockerswarm-02
+      ansible_groups:
+        - docker_engine
+        - docker_swarm_manager
+      image: atosatto/centos
+      image_version: 7-systemd
+      privileged: True
+    - name: ansible-dockerswarm-03
+      ansible_groups:
+        - docker_engine
+        - docker_swarm_worker
+      privileged: True
+      image: atosatto/centos     # TODO: Change is to Ubuntu 14.04
+      image_version: 7-systemd
+
+# configuration options for the internal vagrant driver (used for local development)
 vagrant:
 
   # molecule's --platform option will look for these names
@@ -28,6 +58,7 @@ vagrant:
   instances:
     - name: ansible-dockerswarm-01
       ansible_groups:
+        - vbox_hosts
         - docker_engine
         - docker_swarm_manager
       interfaces:
@@ -38,6 +69,7 @@ vagrant:
         append_platform_to_hostname: yes
     - name: ansible-dockerswarm-02
       ansible_groups:
+        - vbox_hosts
         - docker_engine
         - docker_swarm_manager
       interfaces:
@@ -48,6 +80,7 @@ vagrant:
         append_platform_to_hostname: yes
     - name: ansible-dockerswarm-03
       ansible_groups:
+        - vbox_hosts
         - docker_engine
         - docker_swarm_worker
       interfaces:
