@@ -8,11 +8,13 @@
 - name: Update cache
   apt: update_cache=yes
   when: ansible_os_family == 'Debian'
+  changed_when: false
 
 # Update cache - RedHat
 - name: Update cache
   yum: update_cache=yes
   when: ansible_os_family == 'RedHat'
+  changed_when: false
 
 # with_indexed_items is required as a workaround for this issue:
 # https://github.com/ansible/ansible-modules-core/issues/1178
