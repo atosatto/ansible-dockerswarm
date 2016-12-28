@@ -17,7 +17,7 @@ before_install:
 
 # Install molecule
 install:
-  - pip install molecule
+  - pip install docker-py molecule
 
 # Execute the tests using the molecule docker driver
 script:
