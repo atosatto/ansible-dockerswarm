@@ -18,7 +18,7 @@ docker:
       ansible_groups:
         - docker_engine
         - docker_swarm_manager
-      image: ubuntu
+      image: atosatto/ubuntu
       image_version: 16.04
       privileged: True
     - name: ansible-dockerswarm-02
