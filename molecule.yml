@@ -2,7 +2,7 @@
 
 ansible:
 #  verbose: true
-  playbook: tests/test.yml
+  playbook: playbook.yml
   group_vars:
     vbox_hosts: # this group is needed to override the default ansible variables when running molecule with the virtualbox driver
       # While the names of the net ifaces changes, the internal subnet is consistent in each platform
@@ -89,3 +89,7 @@ vagrant:
           auto_config: true
       options:
         append_platform_to_hostname: yes
+
+# use testinfra to run the tests
+verifier:
+  name: testinfra
