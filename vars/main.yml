@@ -13,3 +13,8 @@ docker_group: "docker"
 
 # Name of the SSH Deamon
 ssh_daemon: sshd
+
+python_sni_pip_dependencies:
+  - pyopenssl
+  - ndg-httpsclient
+  - pyasn1

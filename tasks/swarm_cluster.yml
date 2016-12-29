@@ -4,6 +4,8 @@
   shell: docker info
   changed_when: False
   register: docker_info
+  tags:
+    - skip_ansible_lint # Suppressing the linter
 
 - name: Init "Swarm Mode" on the first manager.
   shell: docker swarm init
@@ -11,6 +13,8 @@
         --advertise-addr {{ docker_swarm_addr }}
   when: "docker_info.stdout.find('Swarm: active') == -1
     and inventory_hostname == groups['docker_swarm_manager'][0]"
+  tags:
+    - skip_ansible_lint # Suppressing the linter
 
 - name: Get the worker join-token.
   shell: docker swarm join-token -q worker
@@ -19,6 +23,8 @@
   delegate_to: "{{ groups['docker_swarm_manager'][0] }}"
   delegate_facts: True
   when: "'docker_swarm_worker' in group_names"
+  tags:
+    - skip_ansible_lint # Suppressing the linter
 
 - name: Get the manager join-token.
   shell: docker swarm join-token -q manager
@@ -28,6 +34,8 @@
   delegate_facts: True
   when: "'docker_swarm_manager' in group_names
     and inventory_hostname != groups['docker_swarm_manager'][0]"
+  tags:
+    - skip_ansible_lint # Suppressing the linter
 
 - name: Declare the address of the first Swarm manager as a fact.
   set_fact:
@@ -49,6 +57,8 @@
   when: "docker_info.stdout.find('Swarm: active') == -1
     and docker_info.stdout.find('Swarm: pending') == -1
     and 'docker_swarm_worker' in group_names"
+  tags:
+    - skip_ansible_lint # Suppressing the linter
 
 - name: Join the pending Swarm manager nodes.
   shell: docker swarm join
@@ -61,3 +71,5 @@
     and docker_info.stdout.find('Swarm: pending') == -1
     and 'docker_swarm_manager' in group_names
     and inventory_hostname != groups['docker_swarm_manager'][0]"
+  tags:
+    - skip_ansible_lint # Suppressing the linter

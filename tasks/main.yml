@@ -4,15 +4,11 @@
 - name: Include os-specific variables.
   include_vars: "{{ ansible_os_family }}.yml"
 
-# Update cache - debian
-- name: Update cache
+# Makes sure that the repo cache is fresh
+- name: Update APT cache
   apt: update_cache=yes
   when: ansible_os_family == 'Debian'
-
-# Update cache - RedHat
-- name: Update cache
-  yum: update_cache=yes
-  when: ansible_os_family == 'RedHat'
+  changed_when: false
 
 # with_indexed_items is required as a workaround for this issue:
 # https://github.com/ansible/ansible-modules-core/issues/1178
@@ -22,17 +18,23 @@
     state: present
   with_indexed_items: "{{ python_pip_packages }}"
 
+- name: Install the Python SNI support packages.
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ python_sni_support_packages }}"
+  when: ansible_os_family == 'Debian'
+    and ansible_python_version | version_compare('2.6.0', '>=')
+    and ansible_python_version | version_compare('2.7.9', '<')
+
 # There extra pip dependencies are needed to add SSL SNI support to
 # Python version prior to 2.7.9. SNI support is needed by the Ansible
 # apt_key module.
-- name: Install the Python SNI support packages.
+- name: Install the Python SNI python-pip dependencies.
   pip:
     name: "{{ item }}"
     state: present
-  with_items:
-    - pyopenssl
-    - ndg-httpsclient
-    - pyasn1
+  with_items: "{{ python_sni_pip_dependencies }}"
   when: ansible_os_family == 'Debian'
     and ansible_python_version | version_compare('2.6.0', '>=')
     and ansible_python_version | version_compare('2.7.9', '<')
@@ -41,7 +43,7 @@
 - include: docker_engine.yml
   when: not skip_engine
 
-# Adds the Docker administrators to the Docker group
+# Adds the Docker admin users to the Docker group
 - include: docker_group.yml
   when: not skip_group
 
