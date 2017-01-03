@@ -53,10 +53,12 @@ The list of users that has to be added to the `docker_group` to interact with th
     skip_engine: False
     skip_group: False
     skip_swarm: False
+    skip_docker_py: False
 
 Setting `skip_engine: True` will make the role skip the installation of `docker-engine`.
 If you want to use this role to just install `docker-engine` without enabling `swarm-mode` set `skip_swarm: True`.
 To skip the tasks adding the `docker_admin_users` to the `docker_group` set `skip_group: True`.
+Finally, the `docker-py` installation task can be skipped setting `skip_docker_py` to `True`.
 
 Dependencies
 ------------
