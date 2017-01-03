@@ -1,0 +1,2 @@
+molecule==1.17.3
+docker-py==1.10.6
