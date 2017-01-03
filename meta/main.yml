@@ -3,9 +3,10 @@
 galaxy_info:
   author: Andrea Tosatto
   description: Setup a Docker Swarm Cluster on Centos/RHEL, Ubuntu/Debian.
-  company: "Purple Ocean S.r.l."
-  license: MIT
   min_ansible_version: 2.1
+  license: MIT
+  issue_tracker_url: https://github.com/atosatto/ansible-dockerswarm/issues
+
   platforms:
     - name: EL
       versions:
@@ -19,6 +20,7 @@ galaxy_info:
         - xenial
     - name: Debian
       versions:
+        - etch
         - jessie
   galaxy_tags:
     - docker

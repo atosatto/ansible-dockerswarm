@@ -3,7 +3,7 @@
 default_docker_dependencies:
   - linux-image-extra-virtual
 
-default_python_pip_packages:
+python_pip_packages:
   - python-pip
 
 python_sni_support_packages:
