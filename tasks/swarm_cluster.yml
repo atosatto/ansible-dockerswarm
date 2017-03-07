@@ -1,5 +1,19 @@
 ---
 
+- name: Create a custom swarm network
+  docker_network:
+    name: docker_gwbridge
+    driver_options:
+      com.docker.network.bridge.enable_icc: "false"
+      com.docker.network.bridge.enable_ip_masquerade: "true"
+      com.docker.network.bridge.name: docker_gwbridge
+    ipam_options:
+      subnet: "{{ docker_swarm_network }}"
+      gateway: "{{ docker_swarm_network | ipaddr('net') | ipaddr('1') | ipaddr('ip') }}"
+  tags:
+    - skip_ansible_lint # Suppressing the linter
+  when: docker_swarm_network is defined and docker_swarm_network | ipaddr('net')
+
 - name: Check if "Swarm Mode" is enabled.
   shell: docker info
   changed_when: False
