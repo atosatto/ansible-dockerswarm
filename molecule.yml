@@ -7,9 +7,23 @@ ansible:
     vbox_hosts: # this group is needed to override the default ansible variables when running molecule with the virtualbox driver
       # While the names of the net ifaces changes, the internal subnet is consistent in each platform
       - docker_swarm_addr: "{{ ansible_all_ipv4_addresses | select('match', '172.28.128.*') | first }}"
+  host_vars:
+    ansible-dockerswarm-01:
+      - swarm_labels: foo
+    ansible-dockerswarm-02:
+      - swarm_labels:
+          - bar
+          - libvirt
   raw_env_vars:
     # Fix an issue with the docker driver
     ANSIBLE_REMOTE_TMP: "/tmp"
+  # Uncomment to verify swarm_labels
+  # tags:
+  #   swarm_labels
+
+# Uncomment if docker is going to be used for local development
+# driver:
+#   name: docker
 
 # configuration options for the internal docker driver (used in CI)
 docker:
