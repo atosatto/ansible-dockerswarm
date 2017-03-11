@@ -25,16 +25,22 @@ docker:
       ansible_groups:
         - docker_engine
         - docker_swarm_manager
-      image: atosatto/centos
-      image_version: 7-systemd
+      image: sergk/centos7-systemd
+      image_version: latest
       privileged: True
+      volume_mounts:
+        - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
+      command: '/usr/sbin/init'
     - name: ansible-dockerswarm-03
       ansible_groups:
         - docker_engine
         - docker_swarm_worker
+      image: sergk/centos7-systemd
+      image_version: latest
       privileged: True
-      image: atosatto/centos     # TODO: Change is to Ubuntu 14.04
-      image_version: 7-systemd
+      volume_mounts:
+        - '/sys/fs/cgroup:/sys/fs/cgroup:ro'
+      command: '/usr/sbin/init'
 
 # configuration options for the internal vagrant driver (used for local development)
 vagrant:
