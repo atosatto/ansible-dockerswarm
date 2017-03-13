@@ -8,6 +8,10 @@ docker_repo: main
 # Extra packages that have to be installed together with Docker
 docker_dependencies: "{{ default_docker_dependencies }}"
 
+# Docker swarm network can be define in order to be sure that
+# swarm cluster doesn't overlap with you infrastructure
+# docker_swarm_network: 10.10.8.0/24
+
 # You can set any interface, that is listened by docker engine.
 # e.g. docker_swarm_interface: "eth1"
 docker_swarm_interface: "{{ ansible_default_ipv4['interface'] }}"
