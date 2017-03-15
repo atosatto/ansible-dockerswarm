@@ -60,6 +60,38 @@ If you want to use this role to just install `docker-engine` without enabling `s
 To skip the tasks adding the `docker_admin_users` to the `docker_group` set `skip_group: True`.
 Finally, the `docker-py` installation task can be skipped setting `skip_docker_py` to `True`.
 
+Swarm node labels
+-----------------
+
+[Node labels](https://docs.docker.com/engine/swarm/manage-nodes/#add-or-remove-label-metadata) provide a
+flexible method of node organization. You can also use node labels in service constraints.
+Apply constraints when you create a service to limit the nodes where the scheduler assigns tasks for the service.
+You can define labels by `swarm_labels` variable, e.g:
+
+    $ cat inventory
+    ...
+    [docker_swarm_manager]
+    swarm-01 swarm_labels=deploy
+
+    [docker_swarm_worker]
+    swarm-02 swarm_labels='["libvirt", "docker", "foo", "bar"]'
+    swarm-03
+    ...
+
+In this case:
+
+    $ docker inspect --format '{{json .Spec.Labels}}'  swarm-02 | jq
+    {
+       "bar": "true",
+       "docker": "true",
+       "for": "true",
+       "libvirt": "true",
+    }
+
+You can assign labels to cluster running playbook with `--tags=swarm_labels`
+
+**NB**: Please note, all labels that are not defined in inventory will be removed
+
 Dependencies
 ------------
 
@@ -79,10 +111,10 @@ Example Playbook
     swarm-03
 
     [docker_swarm_manager]
-    swarm-01
+    swarm-01 swarm_labels=deploy
 
     [docker_swarm_worker]
-    swarm-02
+    swarm-02 swarm_labels='["libvirt", "docker", "foo", "bar"]'
     swarm-03
 
     $ cat playbook.yml
