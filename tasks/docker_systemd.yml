@@ -1,0 +1,19 @@
+---
+- name: Write docker.service systemd file
+  template:
+    src: docker.service.j2
+    dest: /etc/systemd/system/docker.service
+
+- name: Ensure docker service systemd directory exists
+  file:
+    path: /etc/systemd/system/docker.service.d
+    state: directory
+
+- name: Write docker options systemd drop-in
+  template:
+    src: docker-options.conf.j2
+    dest: "/etc/systemd/system/docker.service.d/docker-options.conf"
+  notify: restart docker
+
+# restart docker just now and not at the end of play
+- meta: flush_handlers

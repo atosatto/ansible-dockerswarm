@@ -46,6 +46,10 @@
     name: docker-engine
     state: present
 
+- name: Configure systemd for docker
+  include: docker_systemd.yml
+  when: docker_options is defined
+
 - name: Enable the Docker daemon as a service and start it.
   service:
     name: docker

@@ -5,6 +5,15 @@ docker_repo: main
 # docker_repo: testing
 # docker_repo: experimental
 
+# Define docker daemon options
+docker_daemon_network: "172.18.0.1/16"
+docker_daemon_graph: "/var/lib/docker"
+docker_options: "--bip={{ docker_daemon_network }} --graph={{ docker_daemon_graph }}"
+# Define storage driver, which is aufs (by default), but can be overlay
+# Please check https://docs.docker.com/engine/userguide/storagedriver/selectadriver/
+# for details
+# docker_storage_options: -s overlay
+
 # Extra packages that have to be installed together with Docker
 docker_dependencies: "{{ default_docker_dependencies }}"
 
