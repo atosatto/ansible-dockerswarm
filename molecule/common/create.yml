@@ -1,0 +1,56 @@
+---
+
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars:
+    molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
+    molecule_scenario_directory: "{{ lookup('env','MOLECULE_SCENARIO_DIRECTORY') }}"
+    molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
+    molecule_target_os: "{{ lookup('env','MOLECULE_TARGET_OS') | default('centos', true) }}"
+    # Docker Driver Configuration
+    docker_image_name: "molecule_local/ansible-dockerswarm-{{ molecule_target_os }}"
+    docker_image_file:
+      centos: Dockerfile.centos
+      ubuntu: Dockerfile.ubuntu
+    # Vagrant Driver Configuration
+    vagrant_base_image:
+      centos: centos/7
+      ubuntu: bento/ubuntu-16.04
+  tasks:
+
+    # Docker Driver
+    - block:
+        - name: Build an Ansible compatible Docker image
+          docker_image:
+            path: "."
+            name: "{{ docker_image_name }}"
+            dockerfile: "{{ docker_image_file[molecule_target_os] }}"
+
+        - name: Create molecule Docker instance(s)
+          docker_container:
+            name: "{{ item.name }}-{{ molecule_yml.scenario.name }}"
+            hostname: "{{ item.name }}"
+            image: "{{ docker_image_name }}"
+            privileged: yes
+            command: "/usr/sbin/init"
+            recreate: no
+            state: started
+          with_items: "{{ molecule_yml.platforms }}"
+      when: molecule_yml.driver.name == 'docker'
+
+    # Vagrant Driver
+    - block:
+        - name: Create molecule Vagrant instance(s)
+          molecule_vagrant:
+            instance_name: "{{ item }}-{{ molecule_yml.scenario.name }}"
+            platform_box: "{{ vagrant_base_imag[molecule_target_os] }}"
+            provider_memory: 2048
+            provider_cpus: 2
+            instance_interfaces:
+              - auto_config: true
+                network_name: private_network
+                type: dhcp
+            state: up
+          with_items: "{{ molecule_yml.platforms }}"
+      when: molecule_yml.driver.name == 'vagrant'

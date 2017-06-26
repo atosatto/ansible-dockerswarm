@@ -21,7 +21,7 @@ install:
 
 # Execute the tests using the molecule docker driver
 script:
-  - molecule test --driver docker
+  - molecule test --driver-name docker
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
