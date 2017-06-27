@@ -5,10 +5,6 @@ python: "2.7"
 
 sudo: required
 
-# Enable the docker service
-services:
-  - docker
-
 # Enable matrix builds
 env:
   global:
@@ -17,9 +13,12 @@ env:
     - MOLECULE_TARGET_DISTRO=centos
     - MOLECULE_TARGET_DISTRO=ubuntu
 
-# Update all the packages
+# Install the latest docker from apt.dockerproject.org
 before_install:
-  - sudo apt-get -qq update
+  - cat /etc/docker/daemon.json
+  - cat /etc/default/docker
+  - sudo apt-get update
+  - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-engine
 
 # Install molecule
 install:
