@@ -15,8 +15,8 @@ env:
 
 # Install the latest docker from apt.dockerproject.org
 before_install:
-  - cat /etc/docker/daemon.json
-  - cat /etc/default/docker
+  - cat /etc/docker/daemon.json || true
+  - cat /etc/default/docker || true
   - sudo apt-get update
   - sudo apt-get -y -o Dpkg::Options::="--force-confnew" install docker-engine
 
