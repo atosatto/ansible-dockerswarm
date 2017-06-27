@@ -37,6 +37,9 @@
             image: "{{ docker_image_name }}"
             privileged: yes
             command: "{{ docker_command[molecule_target_distro] }}"
+            volumes:
+              # Mount the cgroups fs to allow SystemD to run
+              - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
             recreate: no
             state: started
           with_items: "{{ molecule_yml.platforms }}"
