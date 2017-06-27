@@ -14,7 +14,7 @@
       centos: Dockerfile.centos
       ubuntu: Dockerfile.ubuntu
     docker_command:
-      centos: "/user/sbin/init"
+      centos: "/usr/sbin/init"
       ubuntu: "/sbin/init"
     # Vagrant Driver Configuration
     vagrant_base_image:
