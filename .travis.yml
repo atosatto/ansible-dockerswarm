@@ -19,8 +19,8 @@ env:
 
 # Install the latest docker from apt.dockerproject.org
 before_install:
-  - cat /etc/docker/daemon.json || true
-  - cat /etc/default/docker || true
+  - sudo cat /etc/docker/daemon.json || true
+  - sudo cat /etc/default/docker || true
   - sudo apt-get -qq update
 
 # Install molecule
