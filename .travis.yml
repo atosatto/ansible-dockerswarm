@@ -11,6 +11,8 @@ services:
 
 # Enable matrix builds
 env:
+  global:
+    - DOCKER_STORAGE_DRIVER=vfs
   matrix:
     - MOLECULE_TARGET_DISTRO=centos
     - MOLECULE_TARGET_DISTRO=ubuntu
@@ -25,6 +27,7 @@ install:
 
 # Execute the tests using the molecule docker driver
 script:
+  - docker info
   - molecule test --driver-name docker
 
 notifications:
