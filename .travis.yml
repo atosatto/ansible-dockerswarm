@@ -20,7 +20,8 @@ install:
 
 # Execute the tests using the molecule docker driver
 script:
-  - molecule test --driver-name docker
+  - MOLECULE_TARGET_DISTRO=centos molecule test --driver-name docker
+  - MOLECULE_TARGET_DISTRO=ubuntu molecule test --driver-name docker
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/

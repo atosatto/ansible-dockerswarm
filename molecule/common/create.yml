@@ -7,12 +7,15 @@
     molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
     molecule_scenario_directory: "{{ lookup('env','MOLECULE_SCENARIO_DIRECTORY') }}"
     molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
-    molecule_target_os: "{{ lookup('env','MOLECULE_TARGET_OS') | default('centos', true) }}"
+    molecule_target_distro: "{{ lookup('env','MOLECULE_TARGET_DISTRO') | default('centos', true) }}"
     # Docker Driver Configuration
-    docker_image_name: "molecule_local/ansible-dockerswarm-{{ molecule_target_os }}"
+    docker_image_name: "molecule_local/ansible-dockerswarm-{{ molecule_target_distro }}"
     docker_image_file:
       centos: Dockerfile.centos
       ubuntu: Dockerfile.ubuntu
+    docker_command:
+      centos: "/user/sbin/init"
+      ubuntu: "/sbin/init"
     # Vagrant Driver Configuration
     vagrant_base_image:
       centos: centos/7
@@ -25,7 +28,7 @@
           docker_image:
             path: "."
             name: "{{ docker_image_name }}"
-            dockerfile: "{{ docker_image_file[molecule_target_os] }}"
+            dockerfile: "{{ docker_image_file[molecule_target_distro] }}"
 
         - name: Create molecule Docker instance(s)
           docker_container:
@@ -33,7 +36,7 @@
             hostname: "{{ item.name }}"
             image: "{{ docker_image_name }}"
             privileged: yes
-            command: "/usr/sbin/init"
+            command: "{{ docker_command[molecule_target_distro] }}"
             recreate: no
             state: started
           with_items: "{{ molecule_yml.platforms }}"
@@ -44,7 +47,7 @@
         - name: Create molecule Vagrant instance(s)
           molecule_vagrant:
             instance_name: "{{ item }}-{{ molecule_yml.scenario.name }}"
-            platform_box: "{{ vagrant_base_imag[molecule_target_os] }}"
+            platform_box: "{{ vagrant_base_imag[molecule_target_distro] }}"
             provider_memory: 2048
             provider_cpus: 2
             instance_interfaces:
