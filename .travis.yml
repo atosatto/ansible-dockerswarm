@@ -3,14 +3,19 @@
 language: python
 python: "2.7"
 
-# Use the new container infrastructure
 sudo: required
 
 # Enable the docker service
 services:
   - docker
 
-# Ensure docker is updated
+# Enable matrix builds
+env:
+  matrix:
+    - MOLECULE_TARGET_DISTRO=centos
+    - MOLECULE_TARGET_DISTRO=ubuntu
+
+# Update all the packages
 before_install:
   - sudo apt-get -qq update
 
@@ -20,8 +25,7 @@ install:
 
 # Execute the tests using the molecule docker driver
 script:
-  - MOLECULE_TARGET_DISTRO=centos molecule test --driver-name docker
-  - MOLECULE_TARGET_DISTRO=ubuntu molecule test --driver-name docker
+  - molecule test --driver-name docker
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
