@@ -3,23 +3,8 @@
 - hosts: localhost
   connection: local
   gather_facts: no
-  vars:
-    molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
-    molecule_scenario_directory: "{{ lookup('env','MOLECULE_SCENARIO_DIRECTORY') }}"
-    molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
-    molecule_target_distro: "{{ lookup('env','MOLECULE_TARGET_DISTRO') | default('centos', true) }}"
-    # Docker Driver Configuration
-    docker_image_name: "molecule_local/ansible-dockerswarm-{{ molecule_target_distro }}"
-    docker_image_file:
-      centos: Dockerfile.centos
-      ubuntu: Dockerfile.ubuntu
-    docker_command:
-      centos: "/usr/sbin/init"
-      ubuntu: "/sbin/init"
-    # Vagrant Driver Configuration
-    vagrant_base_image:
-      centos: centos/7
-      ubuntu: bento/ubuntu-16.04
+  vars_files:
+    - config_vars.yml
   tasks:
 
     # Docker Driver
@@ -43,20 +28,20 @@
             recreate: no
             state: started
           with_items: "{{ molecule_yml.platforms }}"
-      when: molecule_yml.driver.name == 'docker'
+      when: molecule_driver_name == 'docker'
 
     # Vagrant Driver
     - block:
         - name: Create molecule Vagrant instance(s)
           molecule_vagrant:
-            instance_name: "{{ item }}-{{ molecule_yml.scenario.name }}"
-            platform_box: "{{ vagrant_base_imag[molecule_target_distro] }}"
+            instance_name: "{{ item.name }}-{{ molecule_yml.scenario.name }}"
+            platform_box: "{{ vagrant_base_image[molecule_target_distro] }}"
             provider_memory: 2048
             provider_cpus: 2
             instance_interfaces:
               - auto_config: true
                 network_name: private_network
                 type: dhcp
-            state: up
+            state: "up"
           with_items: "{{ molecule_yml.platforms }}"
-      when: molecule_yml.driver.name == 'vagrant'
+      when: molecule_driver_name == 'vagrant'

@@ -4,8 +4,8 @@ dependency:
   name: galaxy
 
 driver:
-  name: docker     # The default molecule driver.
-                   # Can be overriden from the CLI with the --driver-name option.
+  name: "${MOLECULE_DRIVER_NAME:-docker}"   # The Molecule Driver can be overriden using
+                                            # the MOLECULE_DRIVER_NAME environment variables.
 lint:
   name: yamllint   # Will use the rules defined in .yamllint
 
@@ -28,6 +28,9 @@ platforms:
 
 provisioner:
   name: ansible
+  options:
+    diff: True
+    v: True
   playbooks:
     setup: ../common/create.yml
     teardown: ../common/destroy.yml

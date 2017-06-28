@@ -3,9 +3,8 @@
 - hosts: localhost
   connection: local
   gather_facts: no
-  vars:
-    molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
-    molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
+  vars_files:
+    - config_vars.yml
   tasks:
 
     # Docker Driver
@@ -15,13 +14,14 @@
             name: "{{ item.name }}-{{ molecule_yml.scenario.name }}"
             state: absent
           with_items: "{{ molecule_yml.platforms }}"
-      when: molecule_yml.driver.name == 'docker'
+      when: molecule_driver_name == 'docker'
 
     # Vagrant Driver
     - block:
         - name: Destroy molecule Vagrant instance(s)
           molecule_vagrant:
-            instance_name: "{{ item }}-{{ molecule_yml.scenario.name }}"
+            instance_name: "{{ item.name }}-{{ molecule_yml.scenario.name }}"
+            platform_box: "{{ vagrant_base_image[molecule_target_distro] }}"
             state: destroy
           with_items: "{{ molecule_yml.platforms }}"
-      when: molecule_yml.driver.name == 'vagrant'
+      when: molecule_driver_name == 'vagrant'
