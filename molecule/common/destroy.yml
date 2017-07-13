@@ -1,0 +1,27 @@
+---
+
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - config_vars.yml
+  tasks:
+
+    # Docker Driver
+    - block:
+        - name: Destroy molecule Docker instance(s)
+          docker_container:
+            name: "{{ item.name }}-{{ molecule_yml.scenario.name }}"
+            state: absent
+          with_items: "{{ molecule_yml.platforms }}"
+      when: molecule_driver_name == 'docker'
+
+    # Vagrant Driver
+    - block:
+        - name: Destroy molecule Vagrant instance(s)
+          molecule_vagrant:
+            instance_name: "{{ item.name }}-{{ molecule_yml.scenario.name }}"
+            platform_box: "{{ vagrant_base_image[molecule_target_distro] }}"
+            state: destroy
+          with_items: "{{ molecule_yml.platforms }}"
+      when: molecule_driver_name == 'vagrant'

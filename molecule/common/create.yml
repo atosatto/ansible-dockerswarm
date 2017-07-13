@@ -1,0 +1,47 @@
+---
+
+- hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - config_vars.yml
+  tasks:
+
+    # Docker Driver
+    - block:
+        - name: Build an Ansible compatible Docker image
+          docker_image:
+            path: "."
+            name: "{{ docker_image_name }}"
+            dockerfile: "{{ docker_image_file[molecule_target_distro] }}"
+
+        - name: Create molecule Docker instance(s)
+          docker_container:
+            name: "{{ item.name }}-{{ molecule_yml.scenario.name }}"
+            hostname: "{{ item.name }}"
+            image: "{{ docker_image_name }}"
+            privileged: yes
+            command: "{{ docker_command[molecule_target_distro] }}"
+            volumes:
+              # Mount the cgroups fs to allow SystemD to run into the containers
+              - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+            recreate: no
+            state: started
+          with_items: "{{ molecule_yml.platforms }}"
+      when: molecule_driver_name == 'docker'
+
+    # Vagrant Driver
+    - block:
+        - name: Create molecule Vagrant instance(s)
+          molecule_vagrant:
+            instance_name: "{{ item.name }}-{{ molecule_yml.scenario.name }}"
+            platform_box: "{{ vagrant_base_image[molecule_target_distro] }}"
+            provider_memory: 2048
+            provider_cpus: 2
+            instance_interfaces:
+              - auto_config: true
+                network_name: private_network
+                type: dhcp
+            state: "up"
+          with_items: "{{ molecule_yml.platforms }}"
+      when: molecule_driver_name == 'vagrant'

@@ -1,0 +1,47 @@
+---
+
+dependency:
+  name: galaxy
+
+driver:
+  name: "${MOLECULE_DRIVER_NAME:-docker}"   # The Molecule Driver can be overriden using
+                                            # the MOLECULE_DRIVER_NAME environment variables.
+lint:
+  name: yamllint   # Will use the rules defined in .yamllint
+
+platforms:
+
+  - name: ansible-dockerswarm-1
+    groups:
+      - docker_engine
+      - docker_swarm_manager
+
+  - name: ansible-dockerswarm-2
+    groups:
+      - docker_engine
+      - docker_swarm_manager
+
+  - name: ansible-dockerswarm-3
+    groups:
+      - docker_engine
+      - docker_swarm_worker
+
+provisioner:
+  name: ansible
+  options:
+    diff: True
+    v: True
+  playbooks:
+    setup: ../common/create.yml
+    teardown: ../common/destroy.yml
+    converge: ../../playbook.yml
+  lint:
+    name: ansible-lint
+
+scenario:
+  name: swarm-cluster
+
+verifier:
+  name: testinfra
+  lint:
+    name: flake8
