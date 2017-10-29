@@ -19,3 +19,9 @@
   when: ansible_user is defined
     and ansible_user in docker_admin_users
     and ansible_user in "{{ addtogroup.results | selectattr('changed') | map(attribute='item') | list }}"
+
+# See https://stackoverflow.com/a/44753457
+- name: Reset ansible connection after group changes
+  meta: reset_connection
+  when: ansible_version.major = 2
+    and ansible_version.minor >= 3
