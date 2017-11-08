@@ -3,7 +3,7 @@
 galaxy_info:
   author: Andrea Tosatto
   description: Setup a Docker Swarm Cluster on Centos/RHEL, Ubuntu/Debian.
-  min_ansible_version: 2.1
+  min_ansible_version: 2.3
   license: MIT
   issue_tracker_url: https://github.com/atosatto/ansible-dockerswarm/issues
 
