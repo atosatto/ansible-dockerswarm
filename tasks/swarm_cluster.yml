@@ -104,8 +104,7 @@
 - name: Remove labels from swarm node
   command: docker node update --label-rm {{ item }} {{ ansible_hostname }}
   with_items: "{{ docker_swarm_labels.stdout_lines }}"
-  when: "{{ docker_swarm_labels.stdout_lines | count > 0 }}"
-  changed_when: False
+  when: item not in swarm_labels
   delegate_to: "{{ groups['docker_swarm_manager'][0] }}"
   delegate_facts: True
   tags:
@@ -114,7 +113,7 @@
 
 - name: Asign labels to swarm nodes | if any
   command: docker node update --label-add {{ item }}=true {{ ansible_hostname }}
-  changed_when: False
+  when: item not in docker_swarm_labels.stdout_lines
   with_items:
     - "{{ swarm_labels  | default([]) }}"
   delegate_to: "{{ groups['docker_swarm_manager'][0] }}"
