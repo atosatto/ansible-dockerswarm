@@ -5,7 +5,7 @@ scenario:
 
 driver:
   name: "${MOLECULE_DRIVER_NAME:-docker}"   # The Molecule Driver can be overriden using
-                                            # the MOLECULE_DRIVER_NAME environment variables.
+                                            # the MOLECULE_DRIVER_NAME environment variable.
 dependency:
   name: galaxy
 
@@ -42,5 +42,7 @@ lint:
 
 verifier:
   name: testinfra
+  additional_files_or_dirs:
+    - ../common/tests/
   lint:
-    name: flake8
+    name: flake8   # Will use the rules defined in .flake8

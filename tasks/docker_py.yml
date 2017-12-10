@@ -1,7 +1,7 @@
 ---
 
 # Specified version because of https://github.com/ansible/ansible/issues/17495
-- name: Install docker-py 1.9.0 to fix Ansible issue 17495
+- name: Install docker-py 1.9.0
   pip:
     name: docker-py
     version: 1.9.0
