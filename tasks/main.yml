@@ -55,5 +55,7 @@
   when: not skip_group
 
 # Setup the Docker Swarm Cluster
-- include: swarm_cluster.yml
+- block:
+  - include: swarm_cluster.yml
+  - include: swarm_labels.yml
   when: not skip_swarm
