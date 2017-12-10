@@ -1,0 +1,13 @@
+---
+
+- name: Provision a Docker Swarm cluster
+  hosts: all
+  become: yes
+  # Scenario specific variables
+  vars: { }
+  # Include the common variables
+  vars_files:
+    - ../common/config_vars.yml
+    - ../common/playbook_vars.yml
+  roles:
+    - { role: ansible-dockerswarm }

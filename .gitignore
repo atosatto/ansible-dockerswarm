@@ -1,6 +1,14 @@
-.molecule/
-.vagrant/
-molecule/*/tests/.cache/
-molecule/*/tests/__pycache__/
+### Ansible ###
 *.retry
-.idea/
+
+### Python ###
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+### Molecule ###
+.tox
+.cache
+.molecule
+.vagrant

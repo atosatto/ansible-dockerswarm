@@ -2,14 +2,15 @@ Ansible Role: Docker Swarm
 ==========================
 
 [![Build Status](https://travis-ci.org/atosatto/ansible-dockerswarm.svg?branch=master)](https://travis-ci.org/atosatto/ansible-dockerswarm)
+[![Galaxy](http://img.shields.io/badge/galaxy-atosatto.docker--swarm-blue.svg?style=flat-square)](https://galaxy.ansible.com/atosatto/docker-swarm)
 
 Setup a Docker Swarm cluster on RHEL/CentOS and Debian/Ubuntu servers
-using the new Docker Engine's "Swarm Mode" (https://docs.docker.com/engine/swarm/).
+using Docker Engine's "Swarm Mode" (https://docs.docker.com/engine/swarm/).
 
 Requirements
 ------------
 
-None.
+An Ansible 2.3 or higher installation.
 
 Role Variables
 --------------
@@ -122,6 +123,27 @@ Example Playbook
       hosts: all
       roles:
         - { role: atosatto.docker-swarm }
+
+Testing
+-------
+
+Tests are performed by [Molecule](http://molecule.readthedocs.org/en/latest/).
+
+    $ pip install tox
+
+To test all the scenarios run
+
+    $ tox
+
+To run a custom molecule command
+
+    $ tox -e py27-ansible23 -- molecule test -s swarm-cluster
+
+The `MOLECULE_DRIVER_NAME` and `MOLECULE_TARGET_DISTRO` allows to change the Molecule driver from Docker to Vagrant and the tests target OS
+
+    $ MOLECULE_DRIVER_NAME=vagrant MOLECULE_TARGET_DISTRO=ubuntu-1604 tox
+
+To test the role on Ubuntu instead of CentOS set the 
 
 License
 -------
