@@ -2,21 +2,21 @@
 
 # Molecule Configuration
 molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
-molecule_scenario_directory: "{{ lookup('env','MOLECULE_SCENARIO_DIRECTORY') }}"
+molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
 molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
 molecule_driver_name: "{{ lookup('env', 'MOLECULE_DRIVER_NAME') | default('docker', true) }}"
-molecule_target_distro: "{{ lookup('env','MOLECULE_TARGET_DISTRO') | default('centos', true) }}"
+molecule_target_distro: "{{ lookup('env','MOLECULE_TARGET_DISTRO') | default('centos-7', true) }}"
 
 # Docker Driver Configuration
 docker_image_name: "molecule_local/ansible-dockerswarm-{{ molecule_target_distro }}"
 docker_image_file:
-  centos: Dockerfile.centos
-  ubuntu: Dockerfile.ubuntu
+  centos-7: Dockerfile.centos
+  ubuntu-1604: Dockerfile.ubuntu
 docker_command:
-  centos: "/usr/sbin/init"
-  ubuntu: "/sbin/init"
+  centos-7: "/usr/sbin/init"
+  ubuntu-1604: "/sbin/init"
 
 # Vagrant Driver Configuration
 vagrant_base_image:
-  centos: "centos/7"
-  ubuntu: "bento/ubuntu-16.04"
+  centos-7: "centos/7"
+  ubuntu-1604: "bento/ubuntu-16.04"

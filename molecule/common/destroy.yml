@@ -20,8 +20,23 @@
     - block:
         - name: Destroy molecule Vagrant instance(s)
           molecule_vagrant:
-            instance_name: "{{ item.name }}-{{ molecule_yml.scenario.name }}"
+            instance_name: "{{ item.name }}"
             platform_box: "{{ vagrant_base_image[molecule_target_distro] }}"
             state: destroy
+          register: server
           with_items: "{{ molecule_yml.platforms }}"
+
+        # Mandatory configuration for Molecule to function.
+
+        - name: Populate instance config
+          set_fact:
+            instance_conf: {}
+
+        - name: Dump instance config
+          copy:
+            # Workaround for Ansible 2.2.
+            # https://github.com/ansible/ansible/issues/20885
+            content: "{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}"
+            dest: "{{ molecule_instance_config }}"
+          when: server.changed | bool
       when: molecule_driver_name == 'vagrant'

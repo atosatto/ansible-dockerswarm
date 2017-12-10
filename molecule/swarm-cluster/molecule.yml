@@ -1,13 +1,13 @@
 ---
 
-dependency:
-  name: galaxy
+scenario:
+  name: swarm-cluster
 
 driver:
   name: "${MOLECULE_DRIVER_NAME:-docker}"   # The Molecule Driver can be overriden using
                                             # the MOLECULE_DRIVER_NAME environment variables.
-lint:
-  name: yamllint   # Will use the rules defined in .yamllint
+dependency:
+  name: galaxy
 
 platforms:
 
@@ -32,14 +32,13 @@ provisioner:
     diff: True
     v: True
   playbooks:
-    setup: ../common/create.yml
-    teardown: ../common/destroy.yml
-    converge: ../../playbook.yml
+    create: ../common/create.yml
+    destroy: ../common/destroy.yml
   lint:
     name: ansible-lint
 
-scenario:
-  name: swarm-cluster
+lint:
+  name: yamllint   # Will use the rules defined in .yamllint
 
 verifier:
   name: testinfra

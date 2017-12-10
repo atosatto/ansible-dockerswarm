@@ -15,8 +15,8 @@ env:
     - MOLECULE_DRIVER_NAME=docker
   # Enable matrix builds
   matrix:
-    - MOLECULE_TARGET_DISTRO=centos
-    - MOLECULE_TARGET_DISTRO=ubuntu
+    - MOLECULE_TARGET_DISTRO=centos-7
+    - MOLECULE_TARGET_DISTRO=ubuntu-1604
 
 # Replace aufs with the vfs docker storage driver
 # to prevent systemd to fail starting docker in docker.
@@ -25,13 +25,13 @@ before_install:
   - sudo service docker restart
   - docker info
 
-# Install molecule
+# Install molecule and docker-py
 install:
-  - pip install -r test-requirements.txt
+  - pip install tox-travis
 
 # Tests all the scenarios
 script:
-  - molecule test
+  - tox
 
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
