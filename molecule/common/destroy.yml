@@ -9,15 +9,19 @@
 
     # Docker Driver
     - block:
+ 
         - name: Destroy molecule Docker instance(s)
           docker_container:
             name: "{{ item.name }}"
             state: absent
+            force_kill: "{{ item.force_kill | default(True) }}"
           with_items: "{{ molecule_yml.platforms }}"
+
       when: molecule_driver_name == 'docker'
 
     # Vagrant Driver
     - block:
+
         - name: Destroy molecule Vagrant instance(s)
           molecule_vagrant:
             instance_name: "{{ item.name }}"
@@ -39,4 +43,5 @@
             content: "{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}"
             dest: "{{ molecule_instance_config }}"
           when: server.changed | bool
+
       when: molecule_driver_name == 'vagrant'

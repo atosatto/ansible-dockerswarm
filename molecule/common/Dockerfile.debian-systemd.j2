@@ -1,0 +1,22 @@
+# Molecule managed
+
+FROM {{ docker_image_from[molecule_target_distro] }}
+
+ENV container docker
+
+# Don't start the optional systemd services. 
+RUN find /etc/systemd/system \
+         /lib/systemd/system \
+         -path '*.wants/*' \
+         -not -name '*journald*' \
+         -not -name '*systemd-tmpfiles*' \
+         -not -name '*systemd-user-sessions*' \
+         -exec rm \{} \;
+
+RUN systemctl set-default multi-user.target
+
+VOLUME [ "/sys/fs/cgroup" ]
+
+CMD ["/sbin/init"]
+
+RUN if [ $(command -v apt-get) ]; then apt-get update && apt-get upgrade -y && apt-get install -y python sudo bash ca-certificates && apt-get clean; fi
