@@ -16,18 +16,13 @@
             dest: "{{ molecule_ephemeral_directory }}/Dockerfile_{{ molecule_target_distro }}"
           register: _dockerfile
 
-        - name: Discover the Platform Docker image
-          docker_image_facts:
-            name: "{{ docker_image_name }}"
-          register: _image
-
         - name: Build an Ansible compatible image for the target Platform
           docker_image:
             name: "{{ docker_image_name }}"
-            dockerfile: "{{ _dockerfile['path'] }}"
+            dockerfile: "{{ _dockerfile['dest'] }}"
             path: "{{ molecule_ephemeral_directory }}"
             force: "yes"
-          when: _dockerfile.changed or _image['images'] | select('equalto', []) | list | count >= 0
+          when: _dockerfile['changed']
 
         - name: Create the target Platform instance(s)
           docker_container:
