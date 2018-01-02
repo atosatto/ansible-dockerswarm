@@ -9,29 +9,45 @@
 
     # Docker Driver
     - block:
-        - name: Build an Ansible compatible Docker image
-          docker_image:
-            path: "."
-            name: "{{ docker_image_name }}"
-            dockerfile: "{{ docker_image_file[molecule_target_distro] }}"
 
-        - name: Create molecule Docker instance(s)
+        - name: Create the target Platform Dockerfile
+          template:
+            src: "{{ docker_image_template[molecule_target_distro] }}"
+            dest: "{{ molecule_ephemeral_directory }}/Dockerfile_{{ molecule_target_distro }}"
+          register: _dockerfile
+
+        - name: Discover the Platform Docker image
+          docker_image_facts:
+            name: "{{ docker_image_name }}"
+          register: _image
+
+        - name: Build an Ansible compatible image for the target Platform
+          docker_image:
+            name: "{{ docker_image_name }}"
+            dockerfile: "{{ _dockerfile['path'] }}"
+            path: "{{ molecule_ephemeral_directory }}"
+            force: "yes"
+          when: _dockerfile.changed or _image['images'] | select('equalto', []) | list | count >= 0
+
+        - name: Create the target Platform instance(s)
           docker_container:
             name: "{{ item.name }}"
             hostname: "{{ item.name }}"
             image: "{{ docker_image_name }}"
-            privileged: yes
-            command: "{{ docker_command[molecule_target_distro] }}"
+            state: started
+            recreate: False
+            log_driver: syslog
+            privileged: "yes"
             volumes:
               # Mount the cgroups fs to allow SystemD to run into the containers
               - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
-            recreate: no
-            state: started
           with_items: "{{ molecule_yml.platforms }}"
+
       when: molecule_driver_name == 'docker'
 
     # Vagrant Driver
     - block:
+
         - name: Create molecule Vagrant instance(s)
           molecule_vagrant:
             instance_name: "{{ item.name }}"
@@ -72,4 +88,5 @@
             content: "{{ instance_conf | to_json | from_json | molecule_to_yaml | molecule_header }}"
             dest: "{{ molecule_instance_config }}"
           when: server.changed | bool
+
       when: molecule_driver_name == 'vagrant'

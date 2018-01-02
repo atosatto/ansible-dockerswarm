@@ -2,16 +2,22 @@
 
 # Molecule Configuration
 molecule_file: "{{ lookup('env','MOLECULE_FILE') }}"
+molecule_ephemeral_directory: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}"
+molecule_scenario_directory: "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}"
 molecule_instance_config: "{{ lookup('env', 'MOLECULE_INSTANCE_CONFIG') }}"
 molecule_yml: "{{ lookup('file', molecule_file) | from_yaml }}"
+
 molecule_driver_name: "{{ lookup('env', 'MOLECULE_DRIVER_NAME') | default('docker', true) }}"
 molecule_target_distro: "{{ lookup('env','MOLECULE_TARGET_DISTRO') | default('centos-7', true) }}"
 
 # Docker Driver Configuration
 docker_image_name: "molecule_local/ansible-dockerswarm-{{ molecule_target_distro }}"
-docker_image_file:
-  centos-7: Dockerfile.centos
-  ubuntu-1604: Dockerfile.ubuntu
+docker_image_template:
+  centos-7: "Dockerfile.centos-systemd.j2"
+  ubuntu-1604: "Dockerfile.ubuntu-systemd.j2"
+docker_image_from:
+  centos-7: "centos:7"
+  ubuntu-1604: "ubuntu:1604"
 docker_command:
   centos-7: "/usr/sbin/init"
   ubuntu-1604: "/sbin/init"
