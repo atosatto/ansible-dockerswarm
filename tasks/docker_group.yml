@@ -29,3 +29,4 @@
   when: ansible_user is defined
     and ansible_user in docker_admin_users
     and ansible_user in (addtogroup.results | selectattr('changed') | map(attribute='item') | list)
+    and ansible_connection == 'ssh'
