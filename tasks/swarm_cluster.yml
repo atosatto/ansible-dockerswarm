@@ -10,8 +10,6 @@
     ipam_options:
       subnet: "{{ docker_swarm_network }}"
       gateway: "{{ docker_swarm_network | ipaddr('net') | ipaddr('1') | ipaddr('ip') }}"
-  tags:
-    - skip_ansible_lint # Suppressing the linter
   when: docker_swarm_network is defined and docker_swarm_network | ipaddr('net')
 
 - name: Check if "Swarm Mode" is enabled.
@@ -28,7 +26,7 @@
   when: "docker_info.stdout.find('Swarm: active') == -1
     and inventory_hostname == groups['docker_swarm_manager'][0]"
   tags:
-    - skip_ansible_lint # Suppressing the linter
+    - skip_ansible_lint  # Suppressing the linter
 
 - name: Get the worker join-token.
   shell: docker swarm join-token -q worker
@@ -38,7 +36,7 @@
   delegate_facts: True
   when: "'docker_swarm_worker' in group_names"
   tags:
-    - skip_ansible_lint # Suppressing the linter
+    - skip_ansible_lint  # Suppressing the linter
 
 - name: Get the manager join-token.
   shell: docker swarm join-token -q manager
@@ -49,7 +47,7 @@
   when: "'docker_swarm_manager' in group_names
     and inventory_hostname != groups['docker_swarm_manager'][0]"
   tags:
-    - skip_ansible_lint # Suppressing the linter
+    - skip_ansible_lint  # Suppressing the linter
 
 - name: Declare the address of the first Swarm manager as a fact.
   set_fact:
@@ -72,7 +70,7 @@
     and docker_info.stdout.find('Swarm: pending') == -1
     and 'docker_swarm_worker' in group_names"
   tags:
-    - skip_ansible_lint # Suppressing the linter
+    - skip_ansible_lint  # Suppressing the linter
 
 - name: Join the pending Swarm manager nodes.
   shell: docker swarm join
@@ -87,4 +85,3 @@
     and inventory_hostname != groups['docker_swarm_manager'][0]"
   tags:
     - skip_ansible_lint # Suppressing the linter
-

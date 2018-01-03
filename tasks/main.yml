@@ -56,6 +56,6 @@
 
 # Setup the Docker Swarm Cluster
 - block:
-  - include: swarm_cluster.yml
-  - include: swarm_labels.yml
+    - include: swarm_cluster.yml
+    - include: swarm_labels.yml
   when: not skip_swarm
