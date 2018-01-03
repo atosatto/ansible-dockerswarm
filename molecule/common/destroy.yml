@@ -9,7 +9,7 @@
 
     # Docker Driver
     - block:
- 
+
         - name: Destroy molecule Docker instance(s)
           docker_container:
             name: "{{ item.name }}"
