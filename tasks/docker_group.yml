@@ -12,7 +12,7 @@
 - block:
 
     # See http://stackoverflow.com/a/37337848/1370301
-    - name: Kill the ansible_user active SSH connections
+    - name: Reset ansible connection after group changes (Ansible < 2.3.0).
       shell: "sleep 1; pkill -u {{ ansible_user }} {{ ssh_daemon }}"
       async: 3  # fail after 3 seconds of waiting
       poll: 2   # wait 2 seconds befor polling the task status
@@ -21,12 +21,15 @@
         and (ansible_version.full | version_compare('2.3.0.0', '<'))
 
     # See https://stackoverflow.com/a/44753457
-    - name: Reset ansible connection after group changes
-      meta: reset_connection
+    - name: Reset ansible connection after group changes (Ansible >= 2.3.0).
+      include: reset_connection.yml
+      static: no  # we need to force dynamic inclusion here to avoid 'reset_connection' to be
+                  # always executed even if the when condition evaluates to false on Ansible 2.4.x
+                  # or to generate syntax errors on Ansible < 2.3
       when: ansible_version is defined
         and (ansible_version.full | version_compare('2.3.0.0', '>='))
 
-  when: ansible_user is defined
+  when: ansible_connection in ['ssh', 'smart']
+    and ansible_user is defined
     and ansible_user in docker_admin_users
     and ansible_user in (addtogroup.results | selectattr('changed') | map(attribute='item') | list)
-    and ansible_connection == 'ssh'

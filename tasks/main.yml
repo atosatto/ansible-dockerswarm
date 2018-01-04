@@ -5,8 +5,9 @@
   include_vars: "{{ ansible_os_family }}.yml"
 
 # Makes sure that the repo cache is fresh
-- name: Update APT cache
-  apt: update_cache=yes
+- name: Update APT cache.
+  apt:
+    update_cache: yes
   when: ansible_os_family == 'Debian'
   changed_when: false
 
