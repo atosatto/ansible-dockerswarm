@@ -84,7 +84,7 @@ In this case:
     {
        "bar": "true",
        "docker": "true",
-       "for": "true",
+       "foo": "true",
        "libvirt": "true",
     }
 
