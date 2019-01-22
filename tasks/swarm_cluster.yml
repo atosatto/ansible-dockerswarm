@@ -1,5 +1,4 @@
 ---
-
 - name: Check if "Swarm Mode" is enabled.
   shell: docker info
   changed_when: False
@@ -7,21 +6,31 @@
   tags:
     - skip_ansible_lint # Suppressing the linter
 
-- name: Init "Swarm Mode" on the first manager.
+# create group 'cluster_test-y21'
+- group_by:
+    key: "cluster_{{ hostvars[inventory_hostname].docker_swarm.cluster }}"
+# create group 'cluster_test-y21_manager' (or -worker)
+- group_by:
+    key: "cluster_{{ hostvars[inventory_hostname].docker_swarm.cluster }}_{{ hostvars[inventory_hostname].docker_swarm.role }}"
+# create group 'cluster_test-y21_leader' (with only one host)
+- group_by:
+    key: "cluster_{{ hostvars[inventory_hostname].docker_swarm.cluster }}_leader"
+  when: "hostvars[inventory_hostname].docker_swarm.role == 'manager'
+      and hostvars[inventory_hostname].docker_swarm.leader"
+
+- name: Init "Swarm Mode" on the leader.
   shell: docker swarm init
         --advertise-addr {{ docker_swarm_addr }}
   when: "docker_info.stdout.find('Swarm: active') == -1
-    and inventory_hostname == groups['docker_swarm_manager'][0]"
-  tags:
-    - skip_ansible_lint # Suppressing the linter
+    and inventory_hostname in groups['cluster_'+hostvars[inventory_hostname].docker_swarm.cluster+'_leader']"
 
 - name: Get the worker join-token.
   shell: docker swarm join-token -q worker
   changed_when: False
   register: docker_worker_token
-  delegate_to: "{{ groups['docker_swarm_manager'][0] }}"
+  delegate_to: "{{ groups['cluster_'+hostvars[inventory_hostname].docker_swarm.cluster+'_leader'][0] }}"
   delegate_facts: True
-  when: "'docker_swarm_worker' in group_names"
+  when: "hostvars[inventory_hostname].docker_swarm.role == 'worker'"
   tags:
     - skip_ansible_lint # Suppressing the linter
 
@@ -29,22 +38,21 @@
   shell: docker swarm join-token -q manager
   changed_when: False
   register: docker_manager_token
-  delegate_to: "{{ groups['docker_swarm_manager'][0] }}"
+  delegate_to: "{{ groups['cluster_'+hostvars[inventory_hostname].docker_swarm.cluster+'_leader'][0] }}"
   delegate_facts: True
-  when: "'docker_swarm_manager' in group_names
-    and inventory_hostname != groups['docker_swarm_manager'][0]"
+  when: "hostvars[inventory_hostname].docker_swarm.role == 'manager'"
   tags:
     - skip_ansible_lint # Suppressing the linter
 
 - name: Declare the address of the first Swarm manager as a fact.
   set_fact:
     docker_manager_address: "{{ docker_swarm_addr }}:{{ docker_swarm_port }}"
-  when: "inventory_hostname == groups['docker_swarm_manager'][0]"
+  when: "inventory_hostname == groups['cluster_'+hostvars[inventory_hostname].docker_swarm.cluster+'_leader'][0]"
 
 - name: Distribute the fact containing address of the first Swarm manager.
   set_fact:
-    docker_manager_address: "{{hostvars[groups['docker_swarm_manager'][0]]['docker_manager_address'] }}"
-  when: "inventory_hostname != groups['docker_swarm_manager'][0]"
+    docker_manager_address: "{{hostvars[groups['cluster_'+hostvars[inventory_hostname].docker_swarm.cluster+'_leader'][0]]['docker_manager_address'] }}"
+  when: "inventory_hostname != groups['cluster_'+hostvars[inventory_hostname].docker_swarm.cluster+'_leader'][0]"
 
 - name: Join the pending Swarm worker nodes.
   shell: docker swarm join
@@ -53,18 +61,18 @@
   changed_when: False
   when: "docker_info.stdout.find('Swarm: active') == -1
     and docker_info.stdout.find('Swarm: pending') == -1
-    and 'docker_swarm_worker' in group_names"
+    and hostvars[inventory_hostname].docker_swarm.role == 'worker'"
   tags:
-    - skip_ansible_lint # Suppressing the linter
+  - skip_ansible_lint # Suppressing the linter
 
 - name: Join the pending Swarm manager nodes.
   shell: docker swarm join
-        --token "{{ docker_manager_token.stdout }}"
-        {{ docker_manager_address }}
+           --token "{{ docker_manager_token.stdout }}"
+    {{ docker_manager_address }}
   changed_when: False
   when: "docker_info.stdout.find('Swarm: active') == -1
     and docker_info.stdout.find('Swarm: pending') == -1
-    and 'docker_swarm_manager' in group_names
-    and inventory_hostname != groups['docker_swarm_manager'][0]"
+    and hostvars[inventory_hostname].docker_swarm.role == 'manager'
+    and inventory_hostname != groups['cluster_'+hostvars[inventory_hostname].docker_swarm.cluster+'_leader'][0]"
   tags:
-    - skip_ansible_lint # Suppressing the linter
+  - skip_ansible_lint # Suppressing the linter

@@ -65,27 +65,23 @@ Dependencies
 
 None.
 
-Example Playbook
+Usage Example
 ----------------
 
-    $ cat inventory
-    swarm-01 ansible_ssh_host=172.10.10.1
-    swarm-02 ansible_ssh_host=172.10.10.2
-    swarm-03 ansible_ssh_host=172.10.10.3
+Add to hostvars:
 
-    [docker_engine]
-    swarm-01
-    swarm-02
-    swarm-03
+    docker_swarm:
+      cluster: <string>
+      role: <string>
+      leader: <bool>
+      
+where 
+* cluster is a cluster name
+* role can be manager or worker
+* leader is true for only one of the managers 
 
-    [docker_swarm_manager]
-    swarm-01
+Example playbook:
 
-    [docker_swarm_worker]
-    swarm-02
-    swarm-03
-
-    $ cat playbook.yml
     - name: "Provision Docker Swarm Cluster"
       hosts: all
       roles:
