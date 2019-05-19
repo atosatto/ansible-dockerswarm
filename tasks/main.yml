@@ -35,6 +35,7 @@
 # apt_key module.
 - name: Install the Python SNI python-pip dependencies.
   pip:
+    executable: "{{ pip_executable }}"
     name: "{{ item }}"
     state: present
   with_items: "{{ python_sni_pip_dependencies }}"
