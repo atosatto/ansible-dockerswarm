@@ -56,7 +56,8 @@
 
 - name: Join the pending Swarm worker nodes.
   shell: docker swarm join
-        --token "{{ docker_worker_token.stdout }}"
+           --token "{{ docker_worker_token.stdout }}"
+           --availability "{{ hostvars[inventory_hostname].docker_swarm.availability | default("active") }}"
         {{ docker_manager_address }}
   changed_when: False
   when: "docker_info.stdout.find('Swarm: active') == -1
@@ -68,6 +69,7 @@
 - name: Join the pending Swarm manager nodes.
   shell: docker swarm join
            --token "{{ docker_manager_token.stdout }}"
+           --availability "{{ hostvars[inventory_hostname].docker_swarm.availability | default("active") }}"
     {{ docker_manager_address }}
   changed_when: False
   when: "docker_info.stdout.find('Swarm: active') == -1

@@ -74,11 +74,14 @@ Add to hostvars:
       cluster: <string>
       role: <string>
       leader: <bool>
+      availability: ["active"|"pause"|"drain"] (optional: default is "active")
       
 where 
 * cluster is a cluster name
 * role can be manager or worker
-* leader is true for only one of the managers 
+* leader is true for only one of the managers (it may not be actual 'leader', it's just a manager-api-calls-handler 
+for ansible and you can move this flag between managers)
+* read about availability at https://docs.docker.com/engine/swarm/manage-nodes/#change-node-availability
 
 Example playbook:
 
@@ -86,6 +89,17 @@ Example playbook:
       hosts: all
       roles:
         - { role: atosatto.docker-swarm }
+
+Example hostvars:
+    
+    docker_swarm:
+      cluster: cluster-moscow
+      role: manager
+      leader: false
+      availability: active
+      
+**Note: any changes you make in `role` and `availability` parameters will not be handled by this ansible role. They mean only for 
+the first run. You have to make changes manually.**
 
 License
 -------
