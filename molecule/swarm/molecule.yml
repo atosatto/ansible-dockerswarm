@@ -32,8 +32,8 @@ platforms:
 provisioner:
   name: ansible
   options:
-    diff: True
-    v: True
+    diff: true
+    v: true
   playbooks:
     create: ../resources/create.yml
     destroy: ../resources/destroy.yml
@@ -47,7 +47,7 @@ lint:
 verifier:
   name: testinfra
   options:
-    vvv: True
+    vvv: true
   additional_files_or_dirs:
     - ../../resources/tests/
   lint:

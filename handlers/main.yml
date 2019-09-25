@@ -3,4 +3,4 @@
 - name: clean yum cache
   command: /usr/bin/yum clean all
   args:
-    warn: no
+    warn: false
