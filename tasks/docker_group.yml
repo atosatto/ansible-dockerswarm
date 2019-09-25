@@ -3,11 +3,11 @@
 - name: Add the Docker administrators to the Docker group
   user:
     name: "{{ item }}"
-    groups: "{{ docker_group }}"
+    groups: "{{ docker_group_name }}"
     append: true
   register: addtogroup
   become: true
-  with_items: "{{ docker_admin_users }}"
+  with_items: "{{ docker_group_users }}"
 
 - block:
 
@@ -27,9 +27,9 @@
                   # always executed even if the when condition evaluates to false on Ansible 2.4.x
                   # or to generate syntax errors on Ansible < 2.3
       when: ansible_version is defined
-        and (ansible_version.full | version_compare('2.3.0.0', '>='))
+        and (ansible_version.full is version_compare('2.3.0.0', '>='))
 
   when: ansible_connection in ['ssh', 'smart']
     and ansible_user is defined
-    and ansible_user in docker_admin_users
+    and ansible_user in docker_group_users
     and ansible_user in (addtogroup.results | selectattr('changed') | map(attribute='item') | list)

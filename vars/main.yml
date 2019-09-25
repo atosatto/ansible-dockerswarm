@@ -1,15 +1,47 @@
 ---
 
-docker_pubkey_id: "58118E89F3A912897C070ADBF76221572C52609D"
-docker_pubkey_server: "hkp://ha.pool.sks-keyservers.net:80"
+docker_architecture:
+  x86_64: "amd64"
 
-docker_apt_repo: "deb https://apt.dockerproject.org/repo {{ ansible_distribution | lower }}-{{ ansible_distribution_release }} {{ docker_repo }}"
+# Docker CE stable release repository
+docker_repo_ce_stable:
+  name: "docker_ce_stable"
+  yum_repo: "https://download.docker.com/linux/centos/7/$basearch/stable"
+  yum_gpg_key: "https://download.docker.com/linux/centos/gpg"
+  yum_gpg_check: "yes"
+  apt_repo: "deb [arch={{ docker_architecture[ansible_architecture] }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable"
+  apt_gpg_key: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+  apt_gpg_key_id: "9DC858229FC7DD38854AE2D88D81803C0EBFCD88"
 
-docker_yum_repo: "https://yum.dockerproject.org/repo/{{ docker_repo }}/centos/7"
-docker_yum_gpgkey: "https://yum.dockerproject.org/gpg"
+# Docker CE edge release repository
+docker_repo_ce_edge:
+  name: "docker_ce_edge"
+  yum_repo: "https://download.docker.com/linux/centos/7/$basearch/edge"
+  yum_gpg_key: "https://download.docker.com/linux/centos/gpg"
+  yum_gpg_check: "yes"
+  apt_repo: "deb [arch={{ docker_architecture[ansible_architecture] }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} edge"
+  apt_gpg_key: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+  apt_gpg_key_id: "9DC858229FC7DD38854AE2D88D81803C0EBFCD88"
 
-# Name of the Docker group
-docker_group: "docker"
+# Docker CE test release repository
+docker_repo_ce_test:
+  name: "docker_ce_test"
+  yum_repo: "https://download.docker.com/linux/centos/7/$basearch/test"
+  yum_gpg_key: "https://download.docker.com/linux/centos/gpg"
+  yum_gpg_check: "yes"
+  apt_repo: "deb [arch={{ docker_architecture[ansible_architecture] }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} test"
+  apt_gpg_key: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+  apt_gpg_key_id: "9DC858229FC7DD38854AE2D88D81803C0EBFCD88"
+
+# Docker CE nightly release repository
+docker_repo_ce_nightly:
+  name: "docker_ce_nightly"
+  yum_repo: "https://download.docker.com/linux/centos/7/$basearch/nightly"
+  yum_gpg_key: "https://download.docker.com/linux/centos/gpg"
+  yum_gpg_check: "yes"
+  apt_repo: "deb [arch={{ docker_architecture[ansible_architecture] }}] https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} nightly"
+  apt_gpg_key: "https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg"
+  apt_gpg_key_id: "9DC858229FC7DD38854AE2D88D81803C0EBFCD88"
 
 # Name of the SSH Deamon
 ssh_daemon: sshd
