@@ -14,10 +14,10 @@
 
 - name: Check if "Swarm Mode" is enabled.
   shell: docker info
-  changed_when: False
+  changed_when: false
   register: docker_info
   tags:
-    - skip_ansible_lint # Suppressing the linter
+    - skip_ansible_lint  # Suppressing the linter
 
 - name: Init "Swarm Mode" on the first manager.
   shell: docker swarm init
@@ -30,20 +30,20 @@
 
 - name: Get the worker join-token.
   shell: docker swarm join-token -q worker
-  changed_when: False
+  changed_when: false
   register: docker_worker_token
   delegate_to: "{{ groups['docker_swarm_manager'][0] }}"
-  delegate_facts: True
+  delegate_facts: true
   when: "'docker_swarm_worker' in group_names"
   tags:
     - skip_ansible_lint  # Suppressing the linter
 
 - name: Get the manager join-token.
   shell: docker swarm join-token -q manager
-  changed_when: False
+  changed_when: false
   register: docker_manager_token
   delegate_to: "{{ groups['docker_swarm_manager'][0] }}"
-  delegate_facts: True
+  delegate_facts: true
   when: "'docker_swarm_manager' in group_names
     and inventory_hostname != groups['docker_swarm_manager'][0]"
   tags:
@@ -65,7 +65,7 @@
         --advertise-addr {{ docker_swarm_addr }}
         --token "{{ docker_worker_token.stdout }}"
         {{ docker_manager_address }}
-  changed_when: False
+  changed_when: false
   when: "docker_info.stdout.find('Swarm: active') == -1
     and docker_info.stdout.find('Swarm: pending') == -1
     and 'docker_swarm_worker' in group_names"
@@ -78,10 +78,10 @@
         --advertise-addr {{ docker_swarm_addr }}
         --token "{{ docker_manager_token.stdout }}"
         {{ docker_manager_address }}
-  changed_when: False
+  changed_when: false
   when: "docker_info.stdout.find('Swarm: active') == -1
     and docker_info.stdout.find('Swarm: pending') == -1
     and 'docker_swarm_manager' in group_names
     and inventory_hostname != groups['docker_swarm_manager'][0]"
   tags:
-    - skip_ansible_lint # Suppressing the linter
+    - skip_ansible_lint  # Suppressing the linter

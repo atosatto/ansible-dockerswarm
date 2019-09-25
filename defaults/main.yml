@@ -42,8 +42,8 @@ docker_group_users:
   - "{{ ansible_user | default(ansible_user_id) }}"  # if ansible_user is not defined, we default to the ansible ansible_user_id fact
 
 # Switches disabling the docker-engine, docker group and swarm-mode setup.
-skip_repo: False    # if true, skips the setup of the docker repository
-skip_engine: False  # if true, skips the docker engine installation
-skip_group: False   # if true, does not add the docker_admin_users to the docker_group_name
-skip_swarm: False   # if true, skips the swarm setup
-skip_docker_py: False  # if true, skips the installation of docker-py
+skip_repo: false    # if true, skips the setup of the docker repository
+skip_engine: false  # if true, skips the docker engine installation
+skip_group: false   # if true, does not add the docker_admin_users to the docker_group_name
+skip_swarm: false   # if true, skips the swarm setup
+skip_docker_py: false  # if true, skips the installation of docker-py
