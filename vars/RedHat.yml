@@ -1,9 +1,11 @@
 ---
 
-default_docker_dependencies: [ ]
-
 python_pip_packages:
   - epel-release
   - python-pip
 
 python_sni_support_packages: [ ]
+
+default_docker_dependencies:
+  # See https://github.com/moby/moby/issues/26054
+  - xfsprogs

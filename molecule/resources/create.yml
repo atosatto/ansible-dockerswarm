@@ -1,0 +1,54 @@
+---
+
+- name: Create the test targets
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    molecule_file: "{{ lookup('env', 'MOLECULE_FILE') }}"
+    molecule_ephemeral_directory: "{{ lookup('env', 'MOLECULE_EPHEMERAL_DIRECTORY') }}"
+    molecule_scenario_directory: "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') }}"
+    molecule_yml: "{{ lookup('file', molecule_file) | molecule_from_yaml }}"
+  tasks:
+
+    - name: Create the test targets Dockerfiles
+      template:
+        src: "Dockerfile.{{ item.dockerfile_tpl | default('default') }}.j2"
+        dest: "{{ molecule_ephemeral_directory }}/Dockerfile_{{ item.image | regex_replace('[^a-zA-Z0-9_]', '_') }}"
+      with_items: "{{ molecule_yml.platforms }}"
+      register: platforms
+
+    - name: Build the test targets Docker images
+      docker_image:
+        path: "{{ molecule_ephemeral_directory }}"
+        name: "molecule_ansible_dockerswarm/{{ item.item.image }}"
+        dockerfile: "{{ item.item.dockerfile | default(item.invocation.module_args.dest) }}"
+        force: "{{ item.item.force | default(true) }}"
+      with_items: "{{ platforms.results }}"
+      when: platforms.changed
+
+    - name: Create the test targets Docker instances
+      docker_container:
+        name: "{{ item.name }}"
+        hostname: "{{ item.name }}"
+        image: "molecule_ansible_dockerswarm/{{ item.image }}"
+        command: "{{ item.command | default(omit) }}"
+        log_driver: json-file
+        privileged: "yes"
+        volumes:
+          # Mount the cgroups fs to allow SystemD to run into the containers
+          - "/sys/fs/cgroup:/sys/fs/cgroup:ro"
+        state: started
+        recreate: false
+      register: server
+      with_items: "{{ molecule_yml.platforms }}"
+      async: 7200
+      poll: 0
+
+    - name: Wait for instance(s) creation to complete
+      async_status:
+        jid: "{{ item.ansible_job_id }}"
+      register: docker_jobs
+      until: docker_jobs.finished
+      retries: 300
+      with_items: "{{ server.results }}"

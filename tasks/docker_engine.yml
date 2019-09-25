@@ -1,53 +1,31 @@
 ---
 
-- name: Import Docker APT public key.
-  apt_key:
-    keyserver: "{{ docker_pubkey_server }}"
-    id: "{{ docker_pubkey_id }}"
-    state: present
-  when: ansible_os_family == 'Debian'
-
-- name: Install yum-utils if necessary.
-  yum:
-    name: yum-utils
-    state: present
-  when: ansible_os_family == 'RedHat'
-
-- name: Install apt-transport-https if necessary.
-  apt:
-    name: apt-transport-https
-    state: present
-  when: ansible_os_family == 'Debian'
-
-- name: Add the YUM Docker repository.
-  yum_repository:
-    name: docker
-    description: Docker Repository
-    baseurl: "{{ docker_yum_repo }}"
-    gpgkey: "{{ docker_yum_gpgkey }}"
-    gpgcheck: yes
-  when: ansible_os_family == 'RedHat'
-
-- name: Add the APT Docker repository.
-  apt_repository:
-    repo: "{{ docker_apt_repo }}"
-    state: present
-    filename: 'docker'
-  when: ansible_os_family == 'Debian'
-
 - name: Install Docker dependencies.
   package:
-    name: "{{ item }}"
+    name: "{{ docker_dependencies }}"
     state: present
-  with_items: "{{ docker_dependencies }}"
 
-- name: Install the Docker Engine.
+- block:
+
+  - name: Prefix the Docker package version with the correct separator on RedHat
+    set_fact:
+      _docker_package_version: "-{{ docker_package_version }}"
+    when: ansible_os_family == 'RedHat'
+
+  - name: Prefix the Docker package version with the correct separator on Debian
+    set_fact:
+      _docker_package_version: "-{{ docker_package_version }}"
+    when: ansible_os_family == 'Debian'
+
+  when: docker_package_version != ''
+
+- name: Install Docker.
   package:
-    name: docker-engine
-    state: present
+    name: "{{ docker_package_name }}{{ _docker_package_version | default('') }}"
+    state: "{{ docker_package_state }}"
 
-- name: Enable the Docker daemon as a service and start it.
+- name: Enable the Docker daemon service and start it.
   service:
     name: docker
-    state: started
-    enabled: yes
+    state: "{{ docker_service_state }}"
+    enabled: "{{ docker_service_enabled }}"

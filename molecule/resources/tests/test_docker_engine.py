@@ -1,29 +1,30 @@
+import os
 import testinfra.utils.ansible_runner
 
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
-    '.molecule/ansible_inventory.yml').get_hosts('all')
+    os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
 debian_os = ['debian', 'ubuntu']
 rhel_os = ['redhat', 'centos']
 
 
-def test_docker_repository_exists(host):
+def test_docker_ce_stable_repository_exists(host):
 
     f = None
     if host.system_info.distribution.lower() in debian_os:
-        f = host.file('/etc/apt/sources.list.d/docker.list')
+        f = host.file('/etc/apt/sources.list.d/docker_ce_stable.list')
     if host.system_info.distribution.lower() in rhel_os:
-        f = host.file('/etc/yum.repos.d/docker.repo')
+        f = host.file('/etc/yum.repos.d/docker_ce_stable.repo')
 
     assert f.exists
     assert f.user == 'root'
     assert f.group == 'root'
-    assert oct(f.mode) == '0644'
+    assert f.mode == 0o644
 
 
-def test_docker_engine_installed(host):
+def test_docker_ce_installed(host):
 
-    assert host.package('docker-engine').is_installed
+    assert host.package('docker-ce').is_installed
 
 
 def test_docker_service(host):

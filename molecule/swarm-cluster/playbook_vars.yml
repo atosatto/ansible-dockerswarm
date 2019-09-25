@@ -1,4 +1,0 @@
----
-
-# When testing the role on Vagrant, Swarm should be listening on eth1
-docker_swarm_interface: "{% if molecule_driver_name == 'vagrant' %}eth1{% else %}eth0{% endif %}"

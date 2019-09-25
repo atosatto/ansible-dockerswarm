@@ -11,37 +11,40 @@
   when: ansible_os_family == 'Debian'
   changed_when: false
 
-# with_indexed_items is required as a workaround for this issue:
-# https://github.com/ansible/ansible-modules-core/issues/1178
+# The with_items is required here to make
+# sure epel-release is configured on the host
+# before installing the python-pip package
 - name: Install python-pip.
-  package:
-    name: "{{ item.1 }}"
-    state: present
-  with_indexed_items: "{{ python_pip_packages }}"
-  when: (not skip_docker_py) or (ansible_os_family == 'Debian'
-    and ansible_python_version | version_compare('2.6.0', '>=')
-    and ansible_python_version | version_compare('2.7.9', '<'))
-
-- name: Install the Python SNI support packages.
   package:
     name: "{{ item }}"
     state: present
-  with_items: "{{ python_sni_support_packages }}"
+  with_items: "{{ python_pip_packages }}"
+  when: (not skip_docker_py) or (ansible_os_family == 'Debian'
+    and ansible_python_version is version_compare('2.6.0', '>=')
+    and ansible_python_version is version_compare('2.7.9', '<'))
+
+- name: Install the Python SNI support packages.
+  package:
+    name: "{{ python_sni_support_packages }}"
+    state: present
   when: ansible_os_family == 'Debian'
-    and ansible_python_version | version_compare('2.6.0', '>=')
-    and ansible_python_version | version_compare('2.7.9', '<')
+    and ansible_python_version is version_compare('2.6.0', '>=')
+    and ansible_python_version is version_compare('2.7.9', '<')
 
 # There extra pip dependencies are needed to add SSL SNI support to
 # Python version prior to 2.7.9. SNI support is needed by the Ansible
 # apt_key module.
 - name: Install the Python SNI python-pip dependencies.
   pip:
-    name: "{{ item }}"
+    name: "{{ python_sni_pip_dependencies }}"
     state: present
-  with_items: "{{ python_sni_pip_dependencies }}"
   when: ansible_os_family == 'Debian'
-    and ansible_python_version | version_compare('2.6.0', '>=')
-    and ansible_python_version | version_compare('2.7.9', '<')
+    and ansible_python_version is version_compare('2.6.0', '>=')
+    and ansible_python_version is version_compare('2.7.9', '<')
+
+# Install the Docker repository
+- include: "repo_{{ ansible_os_family }}.yml"
+  when: not skip_repo
 
 # Install the Docker Engine
 - include: docker_engine.yml
