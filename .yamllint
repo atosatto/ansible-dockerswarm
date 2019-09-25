@@ -1,13 +1,16 @@
 extends: default
 
 rules:
+
+  # Disable line-length and truthy values reporting
+  line-length: disable
+  truthy: disable
+
+  # Max 1 space to separate the elements in brakets
   braces:
     max-spaces-inside: 1
-    level: error
+
+  # Max 1 space in empty brackets
   brackets:
-    max-spaces-inside: 1
-    level: error
-  line-length: disable
-  # NOTE(retr0h): Templates no longer fail this lint rule.
-  #               Uncomment if running old Molecule templates.
-  # truthy: disable
+    min-spaces-inside-empty: 0
+    max-spaces-inside-empty: 1

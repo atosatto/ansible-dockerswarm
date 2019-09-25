@@ -3,7 +3,7 @@
 - name: Get list of labels.
   command: >-
          docker inspect
-         --format {% raw %}'{{range $key, $value := .Spec.Labels}}{{printf "%s\n" $key}}{{end}}'{% endraw %}
+         --format {% raw %}'{{ range $key, $value := .Spec.Labels }}{{ printf "%s\n" $key }}{{ end }}'{% endraw %}
          {{ ansible_hostname }}
   register: docker_swarm_labels
   changed_when: false

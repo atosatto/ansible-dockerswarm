@@ -17,7 +17,7 @@
         _docker_package_version: "-{{ docker_package_version }}"
       when: ansible_os_family == 'Debian'
 
-  when: docker_package_version != ''
+  when: docker_package_version | length > 0
 
 - name: Install Docker.
   package:

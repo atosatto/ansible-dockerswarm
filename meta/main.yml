@@ -25,7 +25,5 @@ galaxy_info:
   galaxy_tags:
     - docker
     - swarm
-    - docker-swarm
-    - docker-cluster
 
 dependencies: []

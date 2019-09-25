@@ -24,8 +24,8 @@
     - name: Reset ansible connection after group changes (Ansible >= 2.3.0).
       include: reset_connection.yml
       static: false  # we need to force dynamic inclusion here to avoid 'reset_connection' to be
-                     # always executed even if the when condition evaluates to false on Ansible 2.4.x
-                     # or to generate syntax errors on Ansible < 2.3
+      # always executed even if the when condition evaluates to false on Ansible 2.4.x
+      # or to generate syntax errors on Ansible < 2.3
       when: ansible_version is defined
         and (ansible_version.full is version_compare('2.3.0.0', '>='))
 
