@@ -56,7 +56,7 @@
 
 - name: Distribute the fact containing address of the first Swarm manager.
   set_fact:
-    docker_manager_address: "{{hostvars[groups['docker_swarm_manager'][0]]['docker_manager_address'] }}"
+    docker_manager_address: "{{ hostvars[groups['docker_swarm_manager'][0]]['docker_manager_address'] }}"
   when: "inventory_hostname != groups['docker_swarm_manager'][0]"
 
 - name: Join the pending Swarm worker nodes.
