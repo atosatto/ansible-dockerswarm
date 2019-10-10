@@ -14,7 +14,7 @@
 
     - name: Prefix the Docker package version with the correct separator on Debian
       set_fact:
-        _docker_package_version: "-{{ docker_package_version }}"
+        _docker_package_version: "={{ docker_package_version }}"
       when: ansible_os_family == 'Debian'
 
   when: docker_package_version | length > 0
@@ -23,6 +23,14 @@
   package:
     name: "{{ docker_package_name }}{{ _docker_package_version | default('') }}"
     state: "{{ docker_package_state }}"
+
+- name: Make sure the Docker daemon configuration directory exists
+  file:
+    path: /etc/docker
+    owner: root
+    group: root
+    mode: 0700
+    state: directory
 
 - name: Configure the Docker deamon.
   template:
