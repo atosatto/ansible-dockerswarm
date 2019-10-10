@@ -1,5 +1,10 @@
 ---
 
+- name: restart docker
+  service:
+    name: docker
+    state: restarted
+
 - name: clean yum cache
   command: /usr/bin/yum clean all
   args:
