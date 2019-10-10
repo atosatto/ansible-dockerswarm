@@ -24,6 +24,9 @@ docker_service_state: "started"
 # Whether the Docker service should start on boot
 docker_service_enabled: "yes"
 
+# Docker Deamon configuration
+docker_daemon_config: {}
+
 # Docker swarm network can be define in order to be sure that
 # swarm cluster doesn't overlap with you infrastructure
 # docker_swarm_network: 10.10.8.0/24

@@ -24,6 +24,15 @@
     name: "{{ docker_package_name }}{{ _docker_package_version | default('') }}"
     state: "{{ docker_package_state }}"
 
+- name: Configure the Docker deamon.
+  template:
+    src: docker-daemon.json.j2
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: 0600
+  notify: restart docker
+
 - name: Enable the Docker daemon service and start it.
   service:
     name: docker
