@@ -68,7 +68,8 @@
   changed_when: false
   when: "docker_info.stdout.find('Swarm: active') == -1
     and docker_info.stdout.find('Swarm: pending') == -1
-    and 'docker_swarm_worker' in group_names"
+    and 'docker_swarm_worker' in group_names
+    and 'docker_swarm_manager' not in group_names"
   tags:
     - skip_ansible_lint  # Suppressing the linter
 
