@@ -1,5 +1,8 @@
 ---
 
+# Repository to be used for the installation of the Docker packages
+docker_repo: "{{ docker_repo_ce_stable }}"
+
 # Name of the package providing Docker
 docker_package_name: "docker-ce"
 
@@ -10,9 +13,6 @@ docker_package_version: ""
 # Installation state of the Docker package.
 # Set it to 'latest' to upgrade Docker.
 docker_package_state: present
-
-# Repository to be used for the installation of the Docker packages
-docker_repo: "{{ docker_repo_ce_stable }}"
 
 # Extra packages that have to be installed together with Docker
 # e.g. linux-image-extra-virtual on some Debian systems

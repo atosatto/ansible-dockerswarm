@@ -1,35 +1,55 @@
-Ansible Role: Docker Swarm
-==========================
+# Ansible Role: Docker
 
 [![Build Status](https://travis-ci.org/atosatto/ansible-dockerswarm.svg?branch=master)](https://travis-ci.org/atosatto/ansible-dockerswarm)
-[![Galaxy](http://img.shields.io/badge/galaxy-atosatto.docker--swarm-blue.svg?style=flat-square)](https://galaxy.ansible.com/atosatto/docker-swarm)
+[![License](https://img.shields.io/badge/license-MIT%20License-brightgreen.svg)](https://opensource.org/licenses/MIT)
+[![Ansible Role](http://img.shields.io/badge/galaxy-atosatto.docker--swarm-blue.svg?style=flat-square)](https://galaxy.ansible.com/atosatto/docker-swarm)
+[![GitHub tag](https://img.shields.io/github/tag/atosatto/ansible-dockerswarm.svg)](https://github.com/atosatto/ansible-dockerswarm/tags)
 
-Setup a Docker Swarm cluster on RHEL/CentOS and Debian/Ubuntu servers
-using Docker Engine's "Swarm Mode" (https://docs.docker.com/engine/swarm/).
+Setup a Docker on RHEL/CentOS and Debian/Ubuntu servers.
+The role supports Docker Engine's "Swarm Mode" (https://docs.docker.com/engine/swarm/) to create a cluster of Docker nodes.
 
-Requirements
-------------
+## Requirements
 
 An Ansible 2.3 or higher installation.
 
-Role Variables
---------------
+## Dependencies
 
-Available variables are listed below, along with default values (see defaults/main.yml):
+None.
 
-    docker_repo: main
-    # docker_repo: testing
-    # docker_repo: experimental
+## Role Variables
 
-The repo from which install Docker. Override the default to install
-testing or experimental docker builds.
+Available variables are listed below, along with default values (see `[defaults/main.yml](defaults/main.yml)`):
+
+    docker_repo: "{{ docker_repo_ce_stable }}"
+
+The repository proving the Docker packages.
+The [Docker Community](https://www.docker.com/docker-community) stable repository is configured by default.
+Additional repositories are defined in `[vars/main.yml](vars/main.yml)` including the edge, test and nightly repositories.
+To skip the configuration of the repository and use the system repositories set `skip_repo: true`.
+
+    docker_package_name: "docker-ce"
+
+Name of the package providing the Docker daemon.
+
+      docker_package_version: ""
+
+Version of the Docker package to be installed on the target hosts.
+When set to `""` the latest available version will be installed.
 
     docker_dependencies: "{{ default_docker_dependencies }}"
 
-Extra packages that have to installed together with Docker.
-The value of `default_docker_dependencies` depends on the target OS family.
-> **NB**: If you are installing Docker on a Raspberry running Raspbian or any other Debian-like OS make sure to set
-`docker_dependencies: [ ]` otherwise Ansible will fail because the `linux-image-extra-virtual` package is not available for the `arm` architecture (see issue #4).
+Additional packages to be installed by the role.
+See `[vars/RedHat.yml](vars/RedHat.yml)` and `[vars/Debian.yml](vars/Debian.yml)` for the definition of the `default_docker_dependencies` variable.
+
+    docker_service_state: "started"
+    docker_service_enabled: "yes"
+
+State of the Docker service.
+
+    docker_daemon_config: {}
+
+Dictionary of Docker deamon configuration options to be written to `/etc/docker/daemon.json`.
+See [Daemon configuration file](https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file) for the detailed documentation of the available options.
 
     docker_swarm_interface: "{{ ansible_default_ipv4['alias'] }}"
 
@@ -37,29 +57,28 @@ Setting `docker_swarm_interface` allows you to define which network interface wi
 
     docker_swarm_addr: "{{ hostvars[inventory_hostname]['ansible_' + docker_swarm_interface]['ipv4']['address'] }}"
 
-By default, the ip address for raft API will be taken from desired interface.
-You can setup listening address where the raft APIs will be exposed, overriding
-the `docker_swarm_addr` variable value in your playbook.
+Listen address for the Swarm raft API.
+By default, the ip address of `docker_swarm_interface`.
 
     docker_swarm_port: 2377
 
-Listening port where the raft APIs will be exposed.
+Listen port for the Swarm raft API.
 
-    docker_admin_users:
+    docker_group_name: "docker"
+    docker_group_users:
       - "{{ ansible_user }}"
 
-The list of users that has to be added to the `docker_group` to interact with the Docker daemon.
+Name of the Docker group and list of users to be added to `docker_group_name` to manage the Docker daemon.
 **NB**: The users must already exist in the system.
 
-    skip_engine: False
-    skip_group: False
-    skip_swarm: False
-    skip_docker_py: False
+    skip_repo: false
+    skip_engine: false
+    skip_group: false
+    skip_swarm: false
+    skip_docker_py: false
 
-Setting `skip_engine: True` will make the role skip the installation of `docker-engine`.
-If you want to use this role to just install `docker-engine` without enabling `swarm-mode` set `skip_swarm: True`.
-To skip the tasks adding the `docker_admin_users` to the `docker_group` set `skip_group: True`.
-Finally, the `docker-py` installation task can be skipped setting `skip_docker_py` to `True`.
+Switches allowing to disable specific functionalities of the role.
+If you want to use this role to install `docker-engine` without enabling `swarm-mode` set `skip_swarm: true`.
 
 Swarm node labels
 -----------------
@@ -93,13 +112,7 @@ You can assign labels to cluster running playbook with `--tags=swarm_labels`
 
 **NB**: Please note, all labels that are not defined in inventory will be removed
 
-Dependencies
-------------
-
-None.
-
-Example Playbook
-----------------
+## Example Playbook
 
     $ cat inventory
     swarm-01 ansible_ssh_host=172.10.10.1
@@ -143,7 +156,7 @@ The `MOLECULE_DRIVER_NAME` and `MOLECULE_TARGET_DISTRO` allows to change the Mol
 
     $ MOLECULE_DRIVER_NAME=vagrant MOLECULE_TARGET_DISTRO=ubuntu-1604 tox
 
-To test the role on Ubuntu instead of CentOS set the 
+To test the role on Ubuntu instead of CentOS set the
 
 License
 -------
