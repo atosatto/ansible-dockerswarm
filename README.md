@@ -18,24 +18,28 @@ None.
 
 ## Role Variables
 
-Available variables are listed below, along with default values (see defaults/main.yml):
+Available variables are listed below, along with default values (see `[defaults/main.yml](defaults/main.yml)`):
 
     docker_repo: "{{ docker_repo_ce_stable }}"
 
-The repository proving the Docker packages. By default [Docker Community](https://www.docker.com/docker-community) stable repository is configured by the role. See `vars/main.yml` for the configuration of the Docker Community edge, test and nightly repositories.
+The repository proving the Docker packages.
+The [Docker Community](https://www.docker.com/docker-community) stable repository is configured by default.
+Additional repositories are defined in `[vars/main.yml](vars/main.yml)` including the edge, test and nightly repositories.
+To skip the configuration of the repository and use the system repositories set `skip_repo: true`.
 
     docker_package_name: "docker-ce"
 
-Name of the Docker package providing.
+Name of the package providing the Docker daemon.
 
       docker_package_version: ""
 
-Version of the Docker package to be installed on the target hosts. By default, the latest available version will be installed.
+Version of the Docker package to be installed on the target hosts.
+When set to `""` the latest available version will be installed.
 
     docker_dependencies: "{{ default_docker_dependencies }}"
 
-Additional packages to install together with Docker.
-See `vars/RedHat.yml` and `vars/Debian.yml` for the definition of the `default_docker_dependencies` variable.
+Additional packages to be installed by the role.
+See `[vars/RedHat.yml](vars/RedHat.yml)` and `[vars/Debian.yml](vars/Debian.yml)` for the definition of the `default_docker_dependencies` variable.
 
     docker_service_state: "started"
     docker_service_enabled: "yes"
@@ -44,7 +48,8 @@ State of the Docker service.
 
     docker_daemon_config: {}
 
-Dictionary of Docker Deamon configuration options to be written to the `/etc/docker/daemon.json` file.
+Dictionary of Docker deamon configuration options to be written to `/etc/docker/daemon.json`.
+See [Daemon configuration file](https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file) for the detailed documentation of the available options.
 
     docker_swarm_interface: "{{ ansible_default_ipv4['alias'] }}"
 
@@ -52,19 +57,18 @@ Setting `docker_swarm_interface` allows you to define which network interface wi
 
     docker_swarm_addr: "{{ hostvars[inventory_hostname]['ansible_' + docker_swarm_interface]['ipv4']['address'] }}"
 
-By default, the ip address for raft API will be taken from desired interface.
-You can setup listening address where the raft APIs will be exposed, overriding
-the `docker_swarm_addr` variable value in your playbook.
+Listen address for the Swarm raft API.
+By default, the ip address of `docker_swarm_interface`.
 
     docker_swarm_port: 2377
 
-Listening port where the raft APIs will be exposed.
+Listen port for the Swarm raft API.
 
     docker_group_name: "docker"
     docker_group_users:
       - "{{ ansible_user }}"
 
-Name of the Docker group and list of of users to be added to the `docker_group_name` to interact with the Docker daemon.
+Name of the Docker group and list of users to be added to `docker_group_name` to manage the Docker daemon.
 **NB**: The users must already exist in the system.
 
     skip_repo: false
@@ -74,7 +78,7 @@ Name of the Docker group and list of of users to be added to the `docker_group_n
     skip_docker_py: false
 
 Switches allowing to disable specific functionalities of the role.
-If you want to use this role to just install `docker-engine` without enabling `swarm-mode` set `skip_swarm: true`.
+If you want to use this role to install `docker-engine` without enabling `swarm-mode` set `skip_swarm: true`.
 
 Swarm node labels
 -----------------
