@@ -41,6 +41,28 @@
     mode: 0600
   notify: restart docker
 
+- name: Ensure service directories exist.
+  file:
+    path: "/etc/systemd/system/{{ item }}.service.d"
+    state: directory
+  with_items:
+    - containerd
+    - docker
+
+- name: Add overrides.
+  template:
+    src: "override-{{ item }}.conf.j2"
+    dest: "/etc/systemd/system/{{ item }}.service.d/override.conf"
+  with_items:
+    - containerd
+    - docker
+  register: override_template
+
+- name: Reload systemd daemon if template is changed.
+  systemd:
+    daemon_reload: true
+  when: override_template is changed
+
 - name: Enable the Docker daemon service and start it.
   service:
     name: docker
