@@ -115,21 +115,16 @@ You can assign labels to cluster running playbook with `--tags=swarm_labels`
 ## Example Playbook
 
     $ cat inventory
-    swarm-01 ansible_ssh_host=172.10.10.1
-    swarm-02 ansible_ssh_host=172.10.10.2
-    swarm-03 ansible_ssh_host=172.10.10.3
-
-    [docker_engine]
-    swarm-01
-    swarm-02
-    swarm-03
+    [docker_swarm:children]
+    docker_swarm_manager
+    docker_swarm_worker
 
     [docker_swarm_manager]
-    swarm-01 swarm_labels=deploy
+    swarm-01 ansible_ssh_host=172.10.10.1 swarm_labels=deploy
 
     [docker_swarm_worker]
-    swarm-02 swarm_labels='["libvirt", "docker", "foo", "bar"]'
-    swarm-03
+    swarm-02 ansible_ssh_host=172.10.10.2 swarm_labels='["libvirt", "docker", "foo", "bar"]'
+    swarm-03 swarm-03 ansible_ssh_host=172.10.10.3
 
     $ cat playbook.yml
     - name: "Provision Docker Swarm Cluster"
