@@ -1,7 +1,7 @@
 ---
 
 python_pip_packages:
-  - python-pip
+  - python3-pip
 
 python_sni_support_packages:
   - python-dev
