@@ -18,7 +18,7 @@
       poll: 2   # wait 2 seconds befor polling the task status
       failed_when: false  # suceed even if the command fails
       when: ansible_version is defined
-        and (ansible_version.full | version_compare('2.3.0.0', '<'))
+        and (ansible_version.full is version_compare('2.3.0.0', '<'))
 
     # See https://stackoverflow.com/a/44753457
     - name: Reset ansible connection after group changes (Ansible >= 2.3.0).

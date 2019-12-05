@@ -28,6 +28,7 @@ env:
     - ANSIBLE=2.6
     - ANSIBLE=2.7
     - ANSIBLE=2.8
+    - ANSIBLE=2.9
 
 # Tests all the scenarios
 script:
