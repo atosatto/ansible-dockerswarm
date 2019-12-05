@@ -1,8 +1,10 @@
 ---
 
-- name: Install apt-transport-https if necessary.
+- name: Install apt-transport-https and gpg if necessary.
   apt:
-    name: apt-transport-https
+    name:
+      - apt-transport-https
+      - gpg
     state: present
 
 - name: Import Docker APT public key.
