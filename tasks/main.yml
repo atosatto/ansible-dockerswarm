@@ -43,23 +43,34 @@
     and ansible_python_version is version_compare('2.7.9', '<')
 
 # Install the Docker repository
-- include: "repo-{{ ansible_os_family }}.yml"
+- include_tasks: "repo-{{ ansible_os_family }}.yml"
   when: not skip_repo
 
+# Install the Docker dependencies
+- name: Install Docker dependencies.
+  package:
+    name: "{{ docker_dependencies }}"
+    state: present
+  when: not skip_containerd or not skip_engine
+
+# Install containerd
+- include_tasks: setup-containerd.yml
+  when: not skip_containerd
+
 # Install the Docker Engine
-- include: setup-docker-engine.yml
+- include_tasks: setup-docker-engine.yml
   when: not skip_engine
 
 # Install docker-py
-- include: setup-docker-py.yml
+- include_tasks: setup-docker-py.yml
   when: not skip_docker_py
 
 # Adds the Docker admin users to the Docker group
-- include: setup-docker-group.yml
+- include_tasks: setup-docker-group.yml
   when: not skip_group
 
 # Setup the Docker Swarm Cluster
 - block:
-    - include: setup-swarm-cluster.yml
-    - include: setup-swarm-labels.yml
+    - include_tasks: setup-swarm-cluster.yml
+    - include_tasks: setup-swarm-labels.yml
   when: not skip_swarm

@@ -1,29 +1,32 @@
-# Ansible Role: Docker
+Ansible Role: Docker
+====================
 
 [![Build Status](https://travis-ci.org/atosatto/ansible-dockerswarm.svg?branch=master)](https://travis-ci.org/atosatto/ansible-dockerswarm)
 [![License](https://img.shields.io/badge/license-MIT%20License-brightgreen.svg)](https://opensource.org/licenses/MIT)
 [![Ansible Role](http://img.shields.io/badge/galaxy-atosatto.docker--swarm-blue.svg?style=flat-square)](https://galaxy.ansible.com/atosatto/docker-swarm)
 [![GitHub tag](https://img.shields.io/github/tag/atosatto/ansible-dockerswarm.svg)](https://github.com/atosatto/ansible-dockerswarm/tags)
 
-Setup a Docker on RHEL/CentOS and Debian/Ubuntu servers.
+Setup Docker on RHEL/CentOS and Debian/Ubuntu servers.
 The role supports Docker Engine's "Swarm Mode" (https://docs.docker.com/engine/swarm/) to create a cluster of Docker nodes.
 
-## Requirements
+Requirements
+------------
 
-An Ansible 2.3 or higher installation.
+An Ansible 2.7 or higher installation.
 
-## Dependencies
+Dependencies
+------------
 
 None.
 
-## Role Variables
+Role Variables
+--------------
 
 Available variables are listed below, along with default values (see `[defaults/main.yml](defaults/main.yml)`):
 
     docker_repo: "{{ docker_repo_ce_stable }}"
 
 The repository proving the Docker packages.
-The [Docker Community](https://www.docker.com/docker-community) stable repository is configured by default.
 Additional repositories are defined in `[vars/main.yml](vars/main.yml)` including the edge, test and nightly repositories.
 To skip the configuration of the repository and use the system repositories set `skip_repo: true`.
 
@@ -36,9 +39,13 @@ Name of the package providing the Docker daemon.
 Version of the Docker package to be installed on the target hosts.
 When set to `""` the latest available version will be installed.
 
+      docker_package_state: present
+
+Set it to `latest` to force the upgrade of the installed Docker packages.
+
     docker_dependencies: "{{ default_docker_dependencies }}"
 
-Additional packages to be installed by the role.
+Additional support packages to be installed alongside Docker by the role.
 See `[vars/RedHat.yml](vars/RedHat.yml)` and `[vars/Debian.yml](vars/Debian.yml)` for the definition of the `default_docker_dependencies` variable.
 
     docker_service_state: "started"
@@ -51,9 +58,34 @@ State of the Docker service.
 Dictionary of Docker deamon configuration options to be written to `/etc/docker/daemon.json`.
 See [Daemon configuration file](https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file) for the detailed documentation of the available options.
 
-    docker_swarm_interface: "{{ ansible_default_ipv4['alias'] }}"
+    containerd_package_name: "containerd.io"
 
-Setting `docker_swarm_interface` allows you to define which network interface will be used for cluster inter-communication.
+Name of the package providing containerd.
+
+    containerd_package_version: ""
+
+Version of the containerd package to be installed.
+When set to `""` the latest available version will be installed.
+
+   containerd_package_state: present
+
+Set it to `latest` to force the upgrade of the installed containerd package.
+
+    containerd_service_state: "started"
+    containerd_service_enabled: "yes"
+
+State of the containerd service.
+
+    docker_group_name: "docker"
+    docker_group_users:
+      - "{{ ansible_user }}"
+
+Name of the Docker group and list of users to be added to `docker_group_name` to manage the Docker daemon.
+**NB**: The users must already exist in the system.
+
+    docker_swarm_interface: "{{ ansible_default_ipv4['interface'] }}"
+
+Network interface to be used for cluster inter-communication.
 
     docker_swarm_addr: "{{ hostvars[inventory_hostname]['ansible_' + docker_swarm_interface]['ipv4']['address'] }}"
 
@@ -64,14 +96,8 @@ By default, the ip address of `docker_swarm_interface`.
 
 Listen port for the Swarm raft API.
 
-    docker_group_name: "docker"
-    docker_group_users:
-      - "{{ ansible_user }}"
-
-Name of the Docker group and list of users to be added to `docker_group_name` to manage the Docker daemon.
-**NB**: The users must already exist in the system.
-
     skip_repo: false
+    skip_containerd: false
     skip_engine: false
     skip_group: false
     skip_swarm: false
@@ -112,7 +138,8 @@ You can assign labels to cluster running playbook with `--tags=swarm_labels`
 
 **NB**: Please note, all labels that are not defined in inventory will be removed
 
-## Example Playbook
+Example Playbook
+----------------
 
     $ cat inventory
     swarm-01 ansible_ssh_host=172.10.10.1
@@ -150,20 +177,13 @@ To test all the scenarios run
 
 To run a custom molecule command
 
-    $ tox -e py27-ansible23 -- molecule test -s swarm-cluster
-
-The `MOLECULE_DRIVER_NAME` and `MOLECULE_TARGET_DISTRO` allows to change the Molecule driver from Docker to Vagrant and the tests target OS
-
-    $ MOLECULE_DRIVER_NAME=vagrant MOLECULE_TARGET_DISTRO=ubuntu-1604 tox
-
-To test the role on Ubuntu instead of CentOS set the
+    $ tox -e py36-ansible29 -- molecule test -s swarm-singlenode
 
 License
 -------
 
 MIT
 
-Author Information
-------------------
+## Author Information
 
 Andrea Tosatto ([@\_hilbert\_](https://twitter.com/_hilbert_))

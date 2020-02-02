@@ -1,10 +1,5 @@
 ---
 
-- name: Install Docker dependencies.
-  package:
-    name: "{{ docker_dependencies }}"
-    state: present
-
 - block:
 
     - name: Prefix the Docker package version with the correct separator on RedHat

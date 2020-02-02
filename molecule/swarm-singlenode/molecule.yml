@@ -1,0 +1,44 @@
+---
+
+# 'single-node' deployment of a Docker Swarm cluster
+
+scenario:
+  name: swarm-singlenode
+
+driver:
+  name: docker
+
+dependency:
+  name: galaxy
+
+platforms:
+
+  - name: dockerswarm-debian-10
+    image: debian:10
+    dockerfile: ../resources/Dockerfile.debian-systemd.j2
+    privileged: true
+    command: "/sbin/init"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    groups:
+      - docker_swarm_manager
+
+provisioner:
+  name: ansible
+  options:
+    diff: true
+    v: true
+  lint:
+    name: ansible-lint
+
+lint:
+  name: yamllint
+
+verifier:
+  name: testinfra
+  options:
+    vvv: true
+  additional_files_or_dirs:
+    - ../../resources/tests/
+  lint:
+    name: flake8   # Will use the rules defined in .flake8

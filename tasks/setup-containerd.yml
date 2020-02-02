@@ -1,0 +1,56 @@
+---
+
+- block:
+
+    - name: Prefix the containerd package version with the correct separator on RedHat.
+      set_fact:
+        _containerd_package_version: "-{{ containerd_package_version }}"
+      when: ansible_os_family == 'RedHat'
+
+    - name: Prefix the containerd package version with the correct separator on Debian.
+      set_fact:
+        _containerd_package_version: "={{ containerd_package_version }}"
+      when: ansible_os_family == 'Debian'
+
+  when: containerd_package_version | length > 0
+
+- name: Install containerd.
+  package:
+    name: "{{ containerd_package_name }}{{ _containerd_package_version | default('') }}"
+    state: "{{ containerd_package_state }}"
+  when: ansible_os_family != 'RedHat'
+    or (ansible_os_family == 'RedHat' and ansible_distribution_major_version != '8')
+
+- name: Install containerd on RHEL 8.
+  package:
+    name: "https://download.docker.com/linux/centos/7/x86_64/stable/Packages/containerd.io-1.2.6-3.3.el7.x86_64.rpm"
+    state: "{{ containerd_package_state }}"
+  when: ansible_os_family == 'RedHat' and ansible_distribution_major_version == '8'
+
+- block:
+
+  - name: Create the systemd overrides directory for containerd.
+    file:
+      name: "/etc/systemd/system/containerd.service.d"
+      state: directory
+
+  - name: Override the systemd unit for containerd.
+    template:
+      src: containerd.systemd.j2
+      dest: "/etc/systemd/system/containerd.service.d/settings.conf"
+    register: _containerd_systemd_unit
+
+  - name: Reload systemd and restart containerd.
+    service:
+      name: containerd
+      state: "{% if containerd_service_state != 'stopped' %}restarted{% else %}stopped{% endif %}"
+      daemon_reload: yes
+    when: _containerd_systemd_unit.changed
+
+  when: ansible_service_mgr == "systemd"
+
+- name: Enable the containerd daemon service and start it.
+  service:
+    name: containerd
+    state: "{{ containerd_service_state }}"
+    enabled: "{{ containerd_service_enabled }}"

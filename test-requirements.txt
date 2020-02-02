@@ -1,3 +1,2 @@
 molecule==2.22.0
 docker-py==1.10.6
-python-vagrant==0.5.15
