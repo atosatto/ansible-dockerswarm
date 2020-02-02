@@ -22,7 +22,7 @@ def test_docker_swarm_status(host):
 
     if hostname in MANAGER_HOSTS:
         assert 'Is Manager: true' in docker_info
-        assert 'Nodes: 3' in docker_info       # the test cluster is of 3 nodes
+        assert 'Nodes: 4' in docker_info       # the test cluster is of 4 nodes
         assert 'Managers: 1' in docker_info    # with 1 managers
 
     elif hostname in WORKER_HOSTS:

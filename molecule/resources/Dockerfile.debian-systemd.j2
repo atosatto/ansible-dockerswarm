@@ -7,7 +7,7 @@ RUN if [ ! -e /sbin/init ]; then ln -s /lib/systemd/systemd /sbin/init ; fi
 
 ENV container docker
 
-# Don't start the optional systemd services. 
+# Don't start the optional systemd services.
 RUN find /etc/systemd/system \
          /lib/systemd/system \
          -path '*.wants/*' \
@@ -22,4 +22,4 @@ VOLUME [ "/sys/fs/cgroup" ]
 
 CMD ["/sbin/init"]
 
-RUN if [ $(command -v apt-get) ]; then apt-get update && apt-get upgrade -y && apt-get install -y python sudo bash net-tools ca-certificates && apt-get clean; fi
+RUN if [ $(command -v apt-get) ]; then apt-get update && apt-get upgrade -y && apt-get install -y python sudo bash net-tools iproute2 ca-certificates && apt-get clean; fi

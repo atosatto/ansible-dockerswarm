@@ -1,7 +1,11 @@
 ---
 
-# Repository to be used for the installation of the Docker packages
+# Repository to be used for the installation of the packages
 docker_repo: "{{ docker_repo_ce_stable }}"
+
+##
+# Docker
+##
 
 # Name of the package providing Docker
 docker_package_name: "docker-ce"
@@ -27,6 +31,42 @@ docker_service_enabled: "yes"
 # Docker Deamon configuration
 docker_daemon_config: {}
 
+##
+# Containerd
+##
+
+# Name of the package providing containerd
+containerd_package_name: "containerd.io"
+
+# Version of the containerd package to be installed.
+# By default, the latest available version will be installed.
+containerd_package_version: ""
+
+# Installation state of the containerd package.
+# Set it to 'latest' to upgrade containerd.
+containerd_package_state: present
+
+# State of the containerd service
+containerd_service_state: "started"
+
+# Whether the containerd service should start on boot
+containerd_service_enabled: "yes"
+
+##
+# Docker Users
+##
+
+# Name of the Docker group
+docker_group_name: "docker"
+
+# List of the users in the Docker group
+docker_group_users:
+  - "{{ ansible_user | default(ansible_user_id) }}"  # if ansible_user is not defined, we default to the ansible ansible_user_id fact
+
+##
+# Docker Swarm
+##
+
 # Docker swarm network can be define in order to be sure that
 # swarm cluster doesn't overlap with you infrastructure
 # docker_swarm_network: 10.10.8.0/24
@@ -37,16 +77,14 @@ docker_swarm_interface: "{{ ansible_default_ipv4['interface'] }}"
 docker_swarm_addr: "{{ hostvars[inventory_hostname]['ansible_' + docker_swarm_interface]['ipv4']['address'] }}"
 docker_swarm_port: 2377
 
-# Name of the Docker group
-docker_group_name: "docker"
-
-# List of the users in the Docker group
-docker_group_users:
-  - "{{ ansible_user | default(ansible_user_id) }}"  # if ansible_user is not defined, we default to the ansible ansible_user_id fact
+##
+# Role Switches
+##
 
 # Switches disabling the docker-engine, docker group and swarm-mode setup.
-skip_repo: false    # if true, skips the setup of the docker repository
-skip_engine: false  # if true, skips the docker engine installation
-skip_group: false   # if true, does not add the docker_admin_users to the docker_group_name
-skip_swarm: false   # if true, skips the swarm setup
-skip_docker_py: false  # if true, skips the installation of docker-py
+skip_repo: false        # if true, skips the setup of the docker repository
+skip_containerd: false  # if true, skips the setup of containerd
+skip_engine: false      # if true, skips the docker engine installation
+skip_group: false       # if true, does not add the docker_admin_users to the docker_group_name
+skip_swarm: false       # if true, skips the swarm setup
+skip_docker_py: false   # if true, skips the installation of docker-py

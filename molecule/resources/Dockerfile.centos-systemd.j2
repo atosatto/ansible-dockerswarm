@@ -22,5 +22,6 @@ VOLUME [ "/sys/fs/cgroup" ]
 
 CMD ["/usr/sbin/init"]
 
-RUN if [ $(command -v dnf) ]; then dnf makecache && dnf --assumeyes install python python-devel python2-dnf net-tools bash && dnf clean all; \
-    elif [ $(command -v yum) ]; then yum makecache fast && yum update -y && yum install -y python sudo yum-plugin-ovl net-tools bash && sed -i 's/plugins=0/plugins=1/g' /etc/yum.conf && yum clean all; fi
+RUN if [ $(command -v dnf) ] && [ $(rpm -E %{rhel}) -eq 8 ]; then dnf makecache && dnf --assumeyes install python3 python3-devel python*-dnf bash iproute && dnf clean all; \
+    elif [ $(command -v dnf) ]; then dnf makecache && dnf --assumeyes install python sudo python-devel python*-dnf bash iproute && dnf clean all; \
+    elif [ $(command -v yum) ]; then yum makecache fast && yum update -y && yum install -y python sudo yum-plugin-ovl net-tools bash iproute && sed -i 's/plugins=0/plugins=1/g' /etc/yum.conf && yum clean all; fi

@@ -1,0 +1,93 @@
+---
+
+# 'multi-node' deployment of a Docker Swarm
+# consisting in 1 master and 2 worker nodes
+
+scenario:
+  name: swarm-multinode
+  test_sequence:
+    - lint
+    - dependency
+    - cleanup
+    - destroy
+    - syntax
+    - create
+    - prepare
+    - converge
+    # - idempotence  # see https://github.com/ansible/ansible/issues/64963
+    - side_effect
+    - verify
+    - cleanup
+    - destroy
+
+driver:
+  name: docker
+
+dependency:
+  name: galaxy
+
+platforms:
+
+  - name: dockerswarm-centos-7
+    image: centos:7
+    dockerfile: ../resources/Dockerfile.centos-systemd.j2
+    privileged: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    command: "/usr/sbin/init"
+    groups:
+      - docker_swarm_manager
+
+  - name: dockerswarm-centos-8
+    image: centos:8
+    dockerfile: ../resources/Dockerfile.centos-systemd.j2
+    privileged: true
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    command: "/usr/sbin/init"
+    groups:
+      - docker_swarm_worker
+
+  - name: dockerswarm-ubuntu-1804
+    image: ubuntu:18.04
+    dockerfile: ../resources/Dockerfile.debian-systemd.j2
+    privileged: true
+    command: "/sbin/init"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    groups:
+      - docker_swarm_worker
+
+  - name: dockerswarm-debian-10
+    image: debian:10
+    dockerfile: ../resources/Dockerfile.debian-systemd.j2
+    privileged: true
+    command: "/sbin/init"
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+    groups:
+      - docker_swarm_worker
+
+provisioner:
+  name: ansible
+  inventory:
+    host_vars:
+      dockerswarm-centos-8:
+        ansible_python_interpreter: "/usr/bin/python3"
+  options:
+    diff: true
+    v: true
+  lint:
+    name: ansible-lint
+
+lint:
+  name: yamllint
+
+verifier:
+  name: testinfra
+  options:
+    vvv: true
+  additional_files_or_dirs:
+    - ../../resources/tests/
+  lint:
+    name: flake8   # Will use the rules defined in .flake8
