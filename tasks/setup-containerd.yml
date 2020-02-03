@@ -36,18 +36,19 @@
 
   - name: Override the systemd unit for containerd.
     template:
-      src: containerd.systemd.j2
-      dest: "/etc/systemd/system/containerd.service.d/settings.conf"
-    register: _containerd_systemd_unit
+      src: containerd-override.conf.j2
+      dest: "/etc/systemd/system/containerd.service.d/override.conf"
+    register: _containerd_systemd_override
 
   - name: Reload systemd and restart containerd.
     service:
       name: containerd
       state: "{% if containerd_service_state != 'stopped' %}restarted{% else %}stopped{% endif %}"
       daemon_reload: yes
-    when: _containerd_systemd_unit.changed
+    when: _containerd_systemd_override.changed
 
-  when: ansible_service_mgr == "systemd"
+  when: containerd_service_override != ""
+    and ansible_service_mgr == "systemd"
 
 - name: Enable the containerd daemon service and start it.
   service:
