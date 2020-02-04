@@ -1,0 +1,7 @@
+---
+
+- name: Install docker-compose.
+  pip:
+    name: docker-compose
+    version: "{{ docker_compose_version | default(omit) }}"
+    state: present
