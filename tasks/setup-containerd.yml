@@ -48,7 +48,7 @@
     when: _containerd_systemd_override.changed
 
   when: containerd_service_override | length > 0
-    and ansible_service_mgr == "systemd"
+    and ansible_service_mgr == 'systemd'
 
 - name: Enable the containerd daemon service and start it.
   service:

@@ -40,7 +40,7 @@
     when: _docker_systemd_override.changed
 
   when: docker_service_override | length > 0
-    ansible_service_mgr == "systemd"
+    and ansible_service_mgr == 'systemd'
 
 - name: Make sure the Docker daemon configuration directory exists
   file:
