@@ -22,6 +22,14 @@ docker_package_state: present
 # e.g. linux-image-extra-virtual on some Debian systems
 docker_dependencies: "{{ default_docker_dependencies }}"
 
+# Contect written to the systemd unit drop-in overriding
+# the default Docker service definition.
+docker_service_override: ""
+# docker_service_override: |
+# [Service]
+# ExecStart=
+# ExecStart=/usr/bin/dockerd
+
 # State of the Docker deamon service
 docker_service_state: "started"
 
@@ -41,6 +49,12 @@ containerd_package_name: "containerd.io"
 # Version of the containerd package to be installed.
 # By default, the latest available version will be installed.
 containerd_package_version: ""
+
+# Contect written to the systemd unit drop-in overriding
+# the default containerd service definition.
+containerd_service_override: |
+  [Service]
+  ExecStartPre=
 
 # Installation state of the containerd package.
 # Set it to 'latest' to upgrade containerd.

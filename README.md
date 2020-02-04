@@ -48,6 +48,15 @@ Set it to `latest` to force the upgrade of the installed Docker packages.
 Additional support packages to be installed alongside Docker by the role.
 See `[vars/RedHat.yml](vars/RedHat.yml)` and `[vars/Debian.yml](vars/Debian.yml)` for the definition of the `default_docker_dependencies` variable.
 
+    docker_service_override: ""
+    # docker_service_override: |
+    # [Service]
+    # ExecStart=
+    # ExecStart=/usr/bin/dockerd
+
+Contect written to the systemd unit drop-in overriding
+the default Docker service definition.
+
     docker_service_state: "started"
     docker_service_enabled: "yes"
 
@@ -70,6 +79,13 @@ When set to `""` the latest available version will be installed.
    containerd_package_state: present
 
 Set it to `latest` to force the upgrade of the installed containerd package.
+
+    containerd_service_override: |
+      [Service]
+      ExecStartPre=
+
+Contect written to the systemd unit drop-in overriding
+the default containerd service definition.
 
     containerd_service_state: "started"
     containerd_service_enabled: "yes"
