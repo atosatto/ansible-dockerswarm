@@ -41,4 +41,4 @@ verifier:
   additional_files_or_dirs:
     - ../../resources/tests/
   lint:
-    name: flake8   # Will use the rules defined in .flake8
+    name: flake8  # Will use the rules defined in .flake8

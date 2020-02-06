@@ -19,6 +19,6 @@
 
 - name: Download docker-compose.
   get_url:
-    url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-{{ ansible_system }}-{{ ansible_userspace_architecture }}"
+    url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-{{ ansible_system }}-{{ ansible_userspace_architecture }}"  # noqa 204
     dest: "/usr/local/bin/docker-compose"
     mode: '0755'
