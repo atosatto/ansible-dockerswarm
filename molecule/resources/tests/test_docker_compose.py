@@ -7,4 +7,9 @@ testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
 
 def test_docker_compose_installed(host):
 
-    assert host.pip_package('docker-compose').is_installed
+    f = host.file('/usr/local/bin/docker-compose')
+
+    assert f.exists
+    assert f.user == 'root'
+    assert f.group == 'root'
+    assert f.mode == 0o755

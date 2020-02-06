@@ -8,4 +8,4 @@ python_sni_support_packages:
   - libssl-dev
   - libffi-dev
 
-default_docker_dependencies: [ ]
+default_docker_dependencies: []

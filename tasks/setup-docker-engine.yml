@@ -2,12 +2,12 @@
 
 - block:
 
-    - name: Prefix the Docker package version with the correct separator on RedHat
+    - name: Prefix the Docker package version with the correct separator on RedHat.
       set_fact:
         _docker_package_version: "-{{ docker_package_version }}"
       when: ansible_os_family == 'RedHat'
 
-    - name: Prefix the Docker package version with the correct separator on Debian
+    - name: Prefix the Docker package version with the correct separator on Debian.
       set_fact:
         _docker_package_version: "={{ docker_package_version }}"
       when: ansible_os_family == 'Debian'
@@ -42,7 +42,7 @@
   when: docker_service_override | length > 0
     and ansible_service_mgr == 'systemd'
 
-- name: Make sure the Docker daemon configuration directory exists
+- name: Make sure the Docker daemon configuration directory exists.
   file:
     path: /etc/docker
     owner: root
