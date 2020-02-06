@@ -7,6 +7,7 @@
       url: "https://api.github.com/repos/docker/compose/releases/latest"
       method: GET
     register: _docker_compose_github_release
+    check_mode: no
     until: _docker_compose_github_release.status == 200
     retries: 5
     delay: 15
