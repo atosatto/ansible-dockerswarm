@@ -6,13 +6,15 @@ Ansible Role: Docker
 [![Ansible Role](http://img.shields.io/badge/galaxy-atosatto.docker--swarm-blue.svg?style=flat-square)](https://galaxy.ansible.com/atosatto/docker-swarm)
 [![GitHub tag](https://img.shields.io/github/tag/atosatto/ansible-dockerswarm.svg)](https://github.com/atosatto/ansible-dockerswarm/tags)
 
-Setup Docker on RHEL/CentOS and Debian/Ubuntu servers.
+Setup Docker on RHEL/CentOS and Debian/Ubuntu servers. <br />
 The role supports Docker Engine's "Swarm Mode" (https://docs.docker.com/engine/swarm/) to create a cluster of Docker nodes.
 
 Requirements
 ------------
 
 An Ansible 2.7 or higher installation.
+This role makes use of the Ansible `json_filter` that requires `jmespath` to be installed on the Ansible machine.
+See the `requirements.txt` file for further details on the specific version of `jmespath` required by the role.
 
 Dependencies
 ------------
@@ -34,12 +36,12 @@ To skip the configuration of the repository and use the system repositories set 
 
 Name of the package providing the Docker daemon.
 
-      docker_package_version: ""
+    docker_package_version: ""
 
 Version of the Docker package to be installed on the target hosts.
 When set to `""` the latest available version will be installed.
 
-      docker_package_state: present
+    docker_package_state: present
 
 Set it to `latest` to force the upgrade of the installed Docker packages.
 
@@ -92,6 +94,11 @@ the default containerd service definition.
 
 State of the containerd service.
 
+    docker_compose_version: ""
+
+Version of docker-compose to be installed via python-pip.
+When set to `""` the latest available version will be installed.
+
     docker_group_name: "docker"
     docker_group_users:
       - "{{ ansible_user }}"
@@ -118,6 +125,7 @@ Listen port for the Swarm raft API.
     skip_group: false
     skip_swarm: false
     skip_docker_py: false
+    skip_docker_compose: false
 
 Switches allowing to disable specific functionalities of the role.
 If you want to use this role to install `docker-engine` without enabling `swarm-mode` set `skip_swarm: true`.

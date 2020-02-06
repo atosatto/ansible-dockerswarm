@@ -2,12 +2,12 @@
 
 - block:
 
-    - name: Prefix the Docker package version with the correct separator on RedHat
+    - name: Prefix the Docker package version with the correct separator on RedHat.
       set_fact:
         _docker_package_version: "-{{ docker_package_version }}"
       when: ansible_os_family == 'RedHat'
 
-    - name: Prefix the Docker package version with the correct separator on Debian
+    - name: Prefix the Docker package version with the correct separator on Debian.
       set_fact:
         _docker_package_version: "={{ docker_package_version }}"
       when: ansible_os_family == 'Debian'
@@ -21,28 +21,28 @@
 
 - block:
 
-  - name: Create the systemd overrides directory for Docker.
-    file:
-      name: "/etc/systemd/system/docker.service.d"
-      state: directory
+    - name: Create the systemd overrides directory for Docker.
+      file:
+        name: "/etc/systemd/system/docker.service.d"
+        state: directory
 
-  - name: Override the systemd unit for Docker.
-    template:
-      src: docker-override.conf.j2
-      dest: "/etc/systemd/system/docker.service.d/override.conf"
-    register: _docker_systemd_override
+    - name: Override the systemd unit for Docker.
+      template:
+        src: docker-override.conf.j2
+        dest: "/etc/systemd/system/docker.service.d/override.conf"
+      register: _docker_systemd_override
 
-  - name: Reload systemd and restart Docker.
-    service:
-      name: docker
-      state: "{% if docker_service_state != 'stopped' %}restarted{% else %}stopped{% endif %}"
-      daemon_reload: yes
-    when: _docker_systemd_override.changed
+    - name: Reload systemd and restart Docker.
+      service:
+        name: docker
+        state: "{% if docker_service_state != 'stopped' %}restarted{% else %}stopped{% endif %}"
+        daemon_reload: yes
+      when: _docker_systemd_override.changed
 
   when: docker_service_override | length > 0
     and ansible_service_mgr == 'systemd'
 
-- name: Make sure the Docker daemon configuration directory exists
+- name: Make sure the Docker daemon configuration directory exists.
   file:
     path: /etc/docker
     owner: root

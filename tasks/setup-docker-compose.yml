@@ -1,0 +1,25 @@
+---
+
+- block:
+
+  - name: Get information on the latest docker-compose release from Github.
+    uri:
+      url: "https://api.github.com/repos/docker/compose/releases/latest"
+      method: GET
+    register: _docker_compose_github_release
+    check_mode: no
+    until: _docker_compose_github_release.status == 200
+    retries: 5
+    delay: 15
+
+  - name: Extract the name of the latest docker-compose release tag.
+    set_fact:
+      docker_compose_version: "{{ _docker_compose_github_release['json'] | json_query('tag_name') }}"
+
+  when: docker_compose_version | length == 0
+
+- name: Download docker-compose.
+  get_url:
+    url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-{{ ansible_system }}-{{ ansible_userspace_architecture }}"  # noqa 204
+    dest: "/usr/local/bin/docker-compose"
+    mode: '0755'

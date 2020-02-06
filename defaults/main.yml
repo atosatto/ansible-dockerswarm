@@ -67,6 +67,14 @@ containerd_service_state: "started"
 containerd_service_enabled: "yes"
 
 ##
+# Docker Compose
+##
+
+# Version of the docker-compose package to be installed.
+# By default, the latest available version will be installed.
+docker_compose_version: ""
+
+##
 # Docker Users
 ##
 
@@ -102,3 +110,4 @@ skip_engine: false      # if true, skips the docker engine installation
 skip_group: false       # if true, does not add the docker_admin_users to the docker_group_name
 skip_swarm: false       # if true, skips the swarm setup
 skip_docker_py: false   # if true, skips the installation of docker-py
+skip_docker_compose: false  # if true, skips the installation of docker-compose

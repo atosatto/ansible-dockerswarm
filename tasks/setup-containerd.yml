@@ -29,23 +29,23 @@
 
 - block:
 
-  - name: Create the systemd overrides directory for containerd.
-    file:
-      name: "/etc/systemd/system/containerd.service.d"
-      state: directory
+    - name: Create the systemd overrides directory for containerd.
+      file:
+        name: "/etc/systemd/system/containerd.service.d"
+        state: directory
 
-  - name: Override the systemd unit for containerd.
-    template:
-      src: containerd-override.conf.j2
-      dest: "/etc/systemd/system/containerd.service.d/override.conf"
-    register: _containerd_systemd_override
+    - name: Override the systemd unit for containerd.
+      template:
+        src: containerd-override.conf.j2
+        dest: "/etc/systemd/system/containerd.service.d/override.conf"
+      register: _containerd_systemd_override
 
-  - name: Reload systemd and restart containerd.
-    service:
-      name: containerd
-      state: "{% if containerd_service_state != 'stopped' %}restarted{% else %}stopped{% endif %}"
-      daemon_reload: yes
-    when: _containerd_systemd_override.changed
+    - name: Reload systemd and restart containerd.
+      service:
+        name: containerd
+        state: "{% if containerd_service_state != 'stopped' %}restarted{% else %}stopped{% endif %}"
+        daemon_reload: yes
+      when: _containerd_systemd_override.changed
 
   when: containerd_service_override | length > 0
     and ansible_service_mgr == 'systemd'

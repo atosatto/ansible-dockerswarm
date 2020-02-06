@@ -19,7 +19,8 @@
     name: "{{ item }}"
     state: present
   with_items: "{{ python_pip_packages }}"
-  when: (not skip_docker_py) or (ansible_os_family == 'Debian'
+  when: (not skip_docker_py) or (not skip_docker_compose)
+    or (ansible_os_family == 'Debian'
     and ansible_python_version is version_compare('2.6.0', '>=')
     and ansible_python_version is version_compare('2.7.9', '<'))
 
@@ -64,6 +65,10 @@
 # Install docker-py
 - include_tasks: setup-docker-py.yml
   when: not skip_docker_py
+
+# Install docker-compose
+- include_tasks: setup-docker-compose.yml
+  when: not skip_docker_compose
 
 # Adds the Docker admin users to the Docker group
 - include_tasks: setup-docker-group.yml
