@@ -62,6 +62,16 @@
 - include_tasks: setup-docker-engine.yml
   when: not skip_engine
 
+# Setup the Docker Swarm Cluster
+- block:
+    - include_tasks: setup-swarm-cluster.yml
+    - include_tasks: setup-swarm-labels.yml
+  when: not skip_swarm
+
+# Adds the Docker admin users to the Docker group
+- include_tasks: setup-docker-group.yml
+  when: not skip_group
+
 # Install docker-py
 - include_tasks: setup-docker-py.yml
   when: not skip_docker_py
@@ -69,13 +79,3 @@
 # Install docker-compose
 - include_tasks: setup-docker-compose.yml
   when: not skip_docker_compose
-
-# Adds the Docker admin users to the Docker group
-- include_tasks: setup-docker-group.yml
-  when: not skip_group
-
-# Setup the Docker Swarm Cluster
-- block:
-    - include_tasks: setup-swarm-cluster.yml
-    - include_tasks: setup-swarm-labels.yml
-  when: not skip_swarm
