@@ -11,37 +11,8 @@
   when: ansible_os_family == 'Debian'
   changed_when: false
 
-# The with_items is required here to make
-# sure epel-release is configured on the host
-# before installing the python-pip package
-- name: Install python-pip.
-  package:
-    name: "{{ item }}"
-    state: present
-  with_items: "{{ python_pip_packages }}"
-  when: (not skip_docker_py) or (not skip_docker_compose)
-    or (ansible_os_family == 'Debian'
-    and ansible_python_version is version_compare('2.6.0', '>=')
-    and ansible_python_version is version_compare('2.7.9', '<'))
-
-- name: Install the Python SNI support packages.
-  package:
-    name: "{{ python_sni_support_packages }}"
-    state: present
-  when: ansible_os_family == 'Debian'
-    and ansible_python_version is version_compare('2.6.0', '>=')
-    and ansible_python_version is version_compare('2.7.9', '<')
-
-# There extra pip dependencies are needed to add SSL SNI support to
-# Python version prior to 2.7.9. SNI support is needed by the Ansible
-# apt_key module.
-- name: Install the Python SNI python-pip dependencies.
-  pip:
-    name: "{{ python_sni_pip_dependencies }}"
-    state: present
-  when: ansible_os_family == 'Debian'
-    and ansible_python_version is version_compare('2.6.0', '>=')
-    and ansible_python_version is version_compare('2.7.9', '<')
+# Install python-pip
+- include_tasks: setup-python-pip.yml
 
 # Install the Docker repository
 - include_tasks: "repo-{{ ansible_os_family }}.yml"
