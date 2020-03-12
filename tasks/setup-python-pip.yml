@@ -4,8 +4,8 @@
   package:
     name: "epel-release"
     state: present
-  when: (not skip_docker_py) or (not skip_docker_compose)
-    and ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora'
+  when: ((not skip_docker_py) or (not skip_docker_compose))
+    and (ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora')
 
 # The with_items is required here to make
 # sure epel-release is configured on the host
