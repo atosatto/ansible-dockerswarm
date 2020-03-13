@@ -15,7 +15,7 @@ docker_package_name: "docker-ce"
 docker_package_version: ""
 
 # Installation state of the Docker package.
-# Set it to 'latest' to upgrade Docker.
+# Set it to 'latest' to upgrade Docker to the latest version.
 docker_package_state: present
 
 # Extra packages that have to be installed together with Docker
@@ -40,6 +40,20 @@ docker_service_enabled: "yes"
 docker_daemon_config: {}
 
 ##
+# Docker CLI
+##
+
+# Name of the package providing the Docker CLI
+docker_cli_package_name: "docker-ce-cli"
+
+# Version of the Docker CLI package to be installed.
+docker_cli_package_version: ""
+
+# Installation state of the Docker CLI package.
+# Set it to 'latest' to upgrade the Docker CLI to the latest version.
+docker_cli_package_state: present
+
+##
 # Containerd
 ##
 
@@ -50,15 +64,15 @@ containerd_package_name: "containerd.io"
 # By default, the latest available version will be installed.
 containerd_package_version: ""
 
+# Installation state of the containerd package.
+# Set it to 'latest' to upgrade containerd to the latest version.
+containerd_package_state: present
+
 # Contect written to the systemd unit drop-in overriding
 # the default containerd service definition.
 containerd_service_override: |
   [Service]
   ExecStartPre=
-
-# Installation state of the containerd package.
-# Set it to 'latest' to upgrade containerd.
-containerd_package_state: present
 
 # State of the containerd service
 containerd_service_state: "started"
@@ -107,7 +121,8 @@ docker_swarm_port: 2377
 skip_repo: false        # if true, skips the setup of the docker repository
 skip_containerd: false  # if true, skips the setup of containerd
 skip_engine: false      # if true, skips the docker engine installation
-skip_group: false       # if true, does not add the docker_admin_users to the docker_group_name
+skip_cli: false         # if true, skips the docker cli installation
 skip_swarm: false       # if true, skips the swarm setup
+skip_group: false       # if true, does not add the docker_admin_users to the docker_group_name
 skip_docker_py: false   # if true, skips the installation of docker-py
 skip_docker_compose: false  # if true, skips the installation of docker-compose
