@@ -43,7 +43,7 @@ When set to `""` the latest available version will be installed.
 
     docker_package_state: present
 
-Set it to `latest` to force the upgrade of the installed Docker packages.
+Set it to `latest` to force the upgrade of the installed Docker package to the latest version.
 
     docker_dependencies: "{{ default_docker_dependencies }}"
 
@@ -69,6 +69,19 @@ State of the Docker service.
 Dictionary of Docker deamon configuration options to be written to `/etc/docker/daemon.json`.
 See [Daemon configuration file](https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file) for the detailed documentation of the available options.
 
+    docker_cli_package_name: "docker-ce-cli"
+
+Name of the package providing the Docker CLI.
+
+    docker_cli_package_version: "{{ docker_package_version }}"
+
+Version of the Docker CLI package to be installed on the target hosts.
+When set to `""` the latest available version will be installed.
+
+    docker_cli_package_state: present
+
+Set it to `latest` to force the upgrade of the installed Docker CLI package to the latest version.
+
     containerd_package_name: "containerd.io"
 
 Name of the package providing containerd.
@@ -78,9 +91,9 @@ Name of the package providing containerd.
 Version of the containerd package to be installed.
 When set to `""` the latest available version will be installed.
 
-   containerd_package_state: present
+    containerd_package_state: present
 
-Set it to `latest` to force the upgrade of the installed containerd package.
+Set it to `latest` to force the upgrade of the installed containerd package to the latest version.
 
     containerd_service_override: |
       [Service]
@@ -122,8 +135,9 @@ Listen port for the Swarm raft API.
     skip_repo: false
     skip_containerd: false
     skip_engine: false
-    skip_group: false
+    skip_cli: false
     skip_swarm: false
+    skip_group: false
     skip_docker_py: false
     skip_docker_compose: false
 

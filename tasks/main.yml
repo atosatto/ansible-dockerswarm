@@ -33,6 +33,10 @@
 - include_tasks: setup-docker-engine.yml
   when: not skip_engine
 
+# Install the Docker CLI
+- include_tasks: setup-docker-cli.yml
+  when: not skip_cli
+
 # Setup the Docker Swarm Cluster
 - block:
     - include_tasks: setup-swarm-cluster.yml

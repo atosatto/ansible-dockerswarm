@@ -1,0 +1,20 @@
+---
+
+- block:
+
+    - name: Prefix the Docker CLI package version with the correct separator on RedHat.
+      set_fact:
+        _docker_cli_package_version: "-{{ docker_cli_package_version }}"
+      when: ansible_os_family == 'RedHat'
+
+    - name: Prefix the Docker CLI package version with the correct separator on Debian.
+      set_fact:
+        _docker_cli_package_version: "={{ docker_cli_package_version }}"
+      when: ansible_os_family == 'Debian'
+
+  when: docker_cli_package_version | length > 0
+
+- name: Install the Docker CLI.
+  package:
+    name: "{{ docker_cli_package_name }}{{ _docker_cli_package_version | default('') }}"
+    state: "{{ docker_cli_package_state }}"
