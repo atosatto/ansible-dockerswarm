@@ -73,7 +73,7 @@ See [Daemon configuration file](https://docs.docker.com/engine/reference/command
 
 Name of the package providing the Docker CLI.
 
-    docker_cli_package_version: "{{ docker_package_version }}"
+    docker_cli_package_version: ""
 
 Version of the Docker CLI package to be installed on the target hosts.
 When set to `""` the latest available version will be installed.

@@ -47,7 +47,7 @@ docker_daemon_config: {}
 docker_cli_package_name: "docker-ce-cli"
 
 # Version of the Docker CLI package to be installed.
-docker_cli_package_version: "{{ docker_package_version }}"
+docker_cli_package_version: ""
 
 # Installation state of the Docker CLI package.
 # Set it to 'latest' to upgrade the Docker CLI to the latest version.
