@@ -1,5 +1,24 @@
 ---
 
+- block:
+
+    - name: Install the Python SNI support packages.
+      package:
+        name: "{{ python_sni_support_packages }}"
+        state: present
+
+    # There extra pip dependencies are needed to add SSL SNI support to
+    # Python version prior to 2.7.9. SNI support is needed by the Ansible
+    # apt_key module.
+    - name: Install the Python SNI python-pip dependencies.
+      pip:
+        name: "{{ python_sni_pip_dependencies }}"
+        state: present
+
+  when: ansible_os_family == 'Debian'
+    and ansible_python_version is version_compare('2.6.0', '>=')
+    and ansible_python_version is version_compare('2.7.9', '<')
+
 - name: Install apt-transport-https and gpg if necessary.
   apt:
     name:
