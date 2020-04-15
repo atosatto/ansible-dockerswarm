@@ -4,6 +4,9 @@ import testinfra.utils.ansible_runner
 testinfra_hosts = testinfra.utils.ansible_runner.AnsibleRunner(
     os.environ['MOLECULE_INVENTORY_FILE']).get_hosts('all')
 
+debian_os = ['debian', 'ubuntu']
+rhel_os = ['redhat', 'centos']
+
 
 def test_docker_ce_config(host):
 
