@@ -11,16 +11,17 @@ galaxy_info:
     - name: EL
       versions:
         - 7
+        - 8
     - name: Ubuntu
       versions:
-        - disco
-        - cosmic
-        - bionic
         - xenial
+        - bionic
     - name: Debian
       versions:
-        - buster
         - stretch
+        - jessie
+        - buster
+
   galaxy_tags:
     - docker
     - swarm
