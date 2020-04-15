@@ -47,7 +47,7 @@
     path: /etc/docker
     owner: root
     group: root
-    mode: 0700
+    mode: 0755
     state: directory
 
 - name: Configure the Docker deamon.
@@ -56,7 +56,7 @@
     dest: /etc/docker/daemon.json
     owner: root
     group: root
-    mode: 0600
+    mode: 0640
   notify: restart docker
 
 - name: Enable the Docker daemon service and start it.
