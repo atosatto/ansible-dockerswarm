@@ -19,11 +19,11 @@
     and ansible_python_version is version_compare('2.6.0', '>=')
     and ansible_python_version is version_compare('2.7.9', '<')
 
-- name: Install apt-transport-https and gpg if necessary.
+- name: Install apt-transport-https and gnupg if necessary.
   apt:
     name:
       - apt-transport-https
-      - gpg
+      - gnupg
     state: present
 
 - name: Import Docker APT public key.
