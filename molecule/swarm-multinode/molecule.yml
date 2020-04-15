@@ -1,24 +1,10 @@
 ---
 
 # 'multi-node' deployment of a Docker Swarm
-# consisting in 1 master and 2 worker nodes
+# consisting in 1 master and 3 worker nodes
 
 scenario:
   name: swarm-multinode
-  test_sequence:
-    - lint
-    - dependency
-    - cleanup
-    - destroy
-    - syntax
-    - create
-    - prepare
-    - converge
-    # - idempotence  # see https://github.com/ansible/ansible/issues/64963
-    - side_effect
-    - verify
-    - cleanup
-    - destroy
 
 driver:
   name: docker
