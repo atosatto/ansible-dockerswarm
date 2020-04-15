@@ -89,6 +89,20 @@ containerd_service_enabled: "yes"
 docker_compose_version: ""
 
 ##
+# Docker-py
+##
+
+# Name of the python-pip package providing docker-py
+docker_py_package_name: "docker"
+
+# Version of the docker-py package to be installed.
+docker_py_package_version: ""
+
+# Installation state of the docker-py package.
+# Set it to 'latest' to upgrade the Docker CLI to the latest version.
+docker_py_package_state: present
+
+##
 # Docker Users
 ##
 
