@@ -112,6 +112,19 @@ State of the containerd service.
 Version of docker-compose to be installed via python-pip.
 When set to `""` the latest available version will be installed.
 
+    docker_py_package_name: "docker"
+
+Name of the python-pip package providing docker-py
+
+    docker_py_package_version: ""
+
+Version of the docker-py package to be installed.
+
+    docker_py_package_state: present
+
+Installation state of the docker-py package.
+Set it to 'latest' to upgrade the Docker CLI to the latest version.
+
     docker_group_name: "docker"
     docker_group_users:
       - "{{ ansible_user }}"
