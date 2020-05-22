@@ -150,6 +150,7 @@ Listen port for the Swarm raft API.
     skip_engine: false
     skip_cli: false
     skip_swarm: false
+    skip_swarm_labels: false
     skip_group: false
     skip_docker_py: false
     skip_docker_compose: false
