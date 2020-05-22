@@ -137,6 +137,7 @@ skip_containerd: false  # if true, skips the setup of containerd
 skip_engine: false      # if true, skips the docker engine installation
 skip_cli: false         # if true, skips the docker cli installation
 skip_swarm: false       # if true, skips the swarm setup
+skip_swarm_labels: false  # if true, skips the swarm labels assignment
 skip_group: false       # if true, does not add the docker_admin_users to the docker_group_name
 skip_docker_py: false   # if true, skips the installation of docker-py
 skip_docker_compose: false  # if true, skips the installation of docker-compose

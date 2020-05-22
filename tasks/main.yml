@@ -41,6 +41,7 @@
 - block:
     - include_tasks: setup-swarm-cluster.yml
     - include_tasks: setup-swarm-labels.yml
+      when: not skip_swarm_labels
   when: not skip_swarm
 
 # Adds the Docker admin users to the Docker group
