@@ -18,8 +18,8 @@
     state: present
   with_indexed_items: "{{ python_pip_packages }}"
   when: (not skip_docker_py) or (ansible_os_family == 'Debian'
-    and ansible_python_version | version_compare('2.6.0', '>=')
-    and ansible_python_version | version_compare('2.7.9', '<'))
+    and ansible_python_version is version('2.6.0', '>=')
+    and ansible_python_version is version('2.7.9', '<'))
 
 - name: Install the Python SNI support packages.
   package:
@@ -27,8 +27,8 @@
     state: present
   with_items: "{{ python_sni_support_packages }}"
   when: ansible_os_family == 'Debian'
-    and ansible_python_version | version_compare('2.6.0', '>=')
-    and ansible_python_version | version_compare('2.7.9', '<')
+    and ansible_python_version is version('2.6.0', '>=')
+    and ansible_python_version is version('2.7.9', '<')
 
 # There extra pip dependencies are needed to add SSL SNI support to
 # Python version prior to 2.7.9. SNI support is needed by the Ansible
@@ -40,8 +40,8 @@
     state: present
   with_items: "{{ python_sni_pip_dependencies }}"
   when: ansible_os_family == 'Debian'
-    and ansible_python_version | version_compare('2.6.0', '>=')
-    and ansible_python_version | version_compare('2.7.9', '<')
+    and ansible_python_version is version('2.6.0', '>=')
+    and ansible_python_version is version('2.7.9', '<')
 
 # Install the Docker Engine
 - include: docker_engine.yml
