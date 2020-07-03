@@ -30,7 +30,7 @@
   register: docker_worker_token
   delegate_to: "{{ groups['cluster_'+hostvars[inventory_hostname].docker_swarm.cluster+'_leader'][0] }}"
   delegate_facts: True
-  when: "hostvars[inventory_hostname].docker_swarm.role == 'manager'"
+  when: "hostvars[inventory_hostname].docker_swarm.role == 'worker'"
   tags:
     - skip_ansible_lint # Suppressing the linter
 
