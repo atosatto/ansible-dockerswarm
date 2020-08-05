@@ -14,6 +14,8 @@ galaxy_info:
         - 8
     - name: Ubuntu
       versions:
+        - focal
+        - eoan
         - xenial
         - bionic
     - name: Debian
