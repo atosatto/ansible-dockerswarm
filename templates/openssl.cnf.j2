@@ -1,0 +1,11 @@
+[ req ]
+prompt                  = no
+distinguished_name      = req_distinguished_name
+
+[ req_distinguished_name ]
+commonName              = {{ docker_api_certs_openssl_domain }}
+stateOrProvinceName     = {{ docker_api_certs_openssl_state }}
+countryName             = {{ docker_api_certs_openssl_country }}
+emailAddress            = {{ docker_api_certs_openssl_email }}
+organizationName        = {{ docker_api_certs_openssl_org }}
+organizationalUnitName  = {{ docker_api_certs_openssl_ou }}
