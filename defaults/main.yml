@@ -40,6 +40,33 @@ docker_service_enabled: "yes"
 docker_daemon_config: {}
 
 ##
+# Docker API cert
+##
+
+# Generate new cert on groups['docker_swarm_manager'][0]
+docker_api_certs_cert_gen: False
+
+# Base dir docker
+docker_api_certs_docker_base_path: /etc/docker
+# Base dir for cert.pem key.pem ca.pem (used for deamon.json)
+docker_api_certs_docker_cert_path: "{{ docker_api_certs_docker_base_path }}/cert"
+
+# used for deamon.json
+docker_api_certs_ca_name: ca.pem
+docker_api_certs_cert_name: cert.pem
+docker_api_certs_key_name: key.pem
+
+# Openssl config for generate CA
+docker_api_certs_openssl_domain: swarm.localdomain.local
+docker_api_certs_openssl_state: Ile-de-France
+docker_api_certs_openssl_country: FR
+docker_api_certs_openssl_email: docker@localhost
+docker_api_certs_openssl_org: My ORG
+docker_api_certs_openssl_ou: My OU
+
+docker_api_certs_docker_certificate_validity: 365
+
+##
 # Docker CLI
 ##
 
@@ -137,6 +164,7 @@ skip_containerd: false  # if true, skips the setup of containerd
 skip_engine: false      # if true, skips the docker engine installation
 skip_cli: false         # if true, skips the docker cli installation
 skip_swarm: false       # if true, skips the swarm setup
+skip_swarm_cert: false  # if true, skips the swarm cert gen and deploy
 skip_group: false       # if true, does not add the docker_admin_users to the docker_group_name
 skip_docker_py: false   # if true, skips the installation of docker-py
 skip_docker_compose: false  # if true, skips the installation of docker-compose
