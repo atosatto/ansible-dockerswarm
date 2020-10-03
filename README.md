@@ -66,6 +66,13 @@ State of the Docker service.
 
     docker_daemon_config: {}
 
+    example:   
+      docker_daemon_config:
+        bip: 10.148.8.1/24
+        default-address-pools: 
+            - base: "10.149.0.0/16"
+              size": 23
+
 Dictionary of Docker deamon configuration options to be written to `/etc/docker/daemon.json`.
 See [Daemon configuration file](https://docs.docker.com/engine/reference/commandline/dockerd/#daemon-configuration-file) for the detailed documentation of the available options.
 
