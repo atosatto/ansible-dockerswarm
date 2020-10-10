@@ -1,10 +1,10 @@
 Ansible Role: Docker
 ====================
 
-[![Build Status](https://travis-ci.org/atosatto/ansible-dockerswarm.svg?branch=master)](https://travis-ci.org/atosatto/ansible-dockerswarm)
+[![Build Status](https://travis-ci.org/jifox/ansible-dockerswarm.svg?branch=master)](https://travis-ci.org/jifox/ansible-dockerswarm)
 [![License](https://img.shields.io/badge/license-MIT%20License-brightgreen.svg)](https://opensource.org/licenses/MIT)
 [![Ansible Role](http://img.shields.io/badge/galaxy-atosatto.docker--swarm-blue.svg?style=flat-square)](https://galaxy.ansible.com/atosatto/docker-swarm)
-[![GitHub tag](https://img.shields.io/github/tag/atosatto/ansible-dockerswarm.svg)](https://github.com/atosatto/ansible-dockerswarm/tags)
+[![GitHub tag](https://img.shields.io/github/tag/atosatto/ansible-dockerswarm.svg)](https://github.com/jifox/ansible-dockerswarm/tags)
 
 Setup Docker on RHEL/CentOS and Debian/Ubuntu servers. <br />
 The role supports Docker Engine's "Swarm Mode" (https://docs.docker.com/engine/swarm/) to create a cluster of Docker nodes.
