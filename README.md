@@ -171,7 +171,7 @@ You can define labels by `swarm_labels` variable, e.g:
     swarm-01 swarm_labels=deploy
 
     [docker_swarm_worker]
-    swarm-02 swarm_labels='["libvirt", "docker", "foo", "bar"]'
+    swarm-02 swarm_labels='["libvirt", "docker", "foo", "bar", "cpu.arch=x86_64", "disk=ssd"]'
     swarm-03
     ...
 
