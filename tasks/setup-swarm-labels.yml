@@ -22,7 +22,7 @@
     - swarm_labels
 
 - name: Assign labels to swarm nodes if any.
-  command: docker node update --label-add {{ item }}=true {{ ansible_fqdn|lower }}
+  command: docker node update --label-add {{ item }}{% if '=' not in item %}=true{%endif%} {{ ansible_fqdn|lower }}
   when: item not in docker_swarm_labels.stdout_lines
   with_items:
     - "{{ swarm_labels  | default([]) }}"
