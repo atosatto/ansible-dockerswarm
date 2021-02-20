@@ -31,5 +31,4 @@
       name: docker-compose
       extra_args: --user
       executable: pip3
-
-  when: ansible_userspace_architecture is undefined
+  when: ansible_userspace_architecture is undefined 
