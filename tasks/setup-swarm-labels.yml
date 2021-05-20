@@ -15,7 +15,7 @@
 - name: Remove labels from swarm node.
   command: docker node update --label-rm {{ item }} {{ ansible_fqdn|lower }}
   with_items: "{{ docker_swarm_labels.stdout_lines }}"
-  when: item not in swarm_labels
+  when: swarm_labels is defined and item not in swarm_labels
   delegate_to: "{{ groups['docker_swarm_manager'][0] }}"
   delegate_facts: true
   tags:
