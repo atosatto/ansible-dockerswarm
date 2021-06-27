@@ -4,7 +4,8 @@
   package:
     name: "epel-release"
     state: present
-  when: ((not skip_docker_py) or (not skip_docker_compose)) and (ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora')
+  when: ((not skip_docker_py) or (not skip_docker_compose))
+    and (ansible_os_family == 'RedHat' and ansible_distribution != 'Fedora')
 
 # The with_items is required here to make
 # sure epel-release is configured on the host
@@ -13,4 +14,7 @@
   package:
     name: "{{ python_pip_packages }}"
     state: present
-  when: (not skip_docker_py) or (not skip_docker_compose) or (ansible_os_family == 'Debian' and ansible_python_version is version_compare('2.6.0', '>=') and ansible_python_version is version_compare('2.7.9', '<'))
+  when: (not skip_docker_py) or (not skip_docker_compose)
+    or (ansible_os_family == 'Debian'
+    and ansible_python_version is version_compare('2.6.0', '>=')
+    and ansible_python_version is version_compare('2.7.9', '<'))
