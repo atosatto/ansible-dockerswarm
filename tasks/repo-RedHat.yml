@@ -1,4 +1,5 @@
 ---
+
 - name: Install yum-utils if necessary.
   yum:
     name: yum-utils
