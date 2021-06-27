@@ -1,4 +1,5 @@
 ---
+
 - block:
 
     - name: Prefix the containerd package version with the correct separator on RedHat.
