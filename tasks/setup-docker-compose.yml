@@ -23,3 +23,12 @@
     url: "https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-{{ ansible_system }}-{{ ansible_userspace_architecture }}"  # noqa 204
     dest: "/usr/local/bin/docker-compose"
     mode: '0755'
+  when: ansible_userspace_architecture is defined 
+
+- block:
+  - name: Pip install Docker Compose.
+    pip:
+      name: docker-compose
+      extra_args: --user
+      executable: pip3
+  when: ansible_userspace_architecture is undefined
