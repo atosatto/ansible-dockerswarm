@@ -36,5 +36,4 @@
   apt_repository:
     repo: "{{ docker_repo['apt_repo'] }}"
     filename: "{{ docker_repo['name'] }}"
-    update_cache: no
     state: present
