@@ -94,7 +94,7 @@
   become: True
 
 - name: Generate client crt
-  command: |
+  shell: |
     echo extendedKeyUsage = clientAuth > {{ docker_api_certs_docker_cert_path }}/client/extfile.cnf \
     && openssl x509 -req -days {{ docker_api_certs_docker_certificate_validity }} -sha256 \
        -in {{ docker_api_certs_docker_cert_path }}/client/client.csr \
