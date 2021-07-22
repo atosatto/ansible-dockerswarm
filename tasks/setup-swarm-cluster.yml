@@ -22,7 +22,7 @@
 - name: Init "Swarm Mode" on the first manager.
   shell: docker swarm init
         --listen-addr {{ docker_swarm_addr }}:{{ docker_swarm_port }}
-        --advertise-addr {{ docker_swarm_addr }}
+        --advertise-addr {{ docker_swarm_addr }} {{ docker_swarm_init_extra_options }}
   when: "docker_info.stdout.find('Swarm: active') == -1
     and inventory_hostname == groups['docker_swarm_manager'][0]"
   tags:

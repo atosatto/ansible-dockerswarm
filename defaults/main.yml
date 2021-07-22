@@ -148,6 +148,12 @@ docker_group_users:
 # swarm cluster doesn't overlap with you infrastructure
 # docker_swarm_network: 10.10.8.0/24
 
+# Custom swarm init args. ex: customize default-addr-pool
+# docker_swarm_init_extra_options: |
+#   --default-addr-pool 10.184.32.0/19 \
+#   --default-addr-pool-mask-length 28
+docker_swarm_init_extra_options: ""
+
 # You can set any interface, that is listened by docker engine.
 # e.g. docker_swarm_interface: "eth1"
 docker_swarm_interface: "{{ ansible_default_ipv4['interface'] }}"
