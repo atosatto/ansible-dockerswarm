@@ -1,7 +1,7 @@
 ---
 
 python_pip_packages:
-  - python-pip
+  - "{% if ansible_python_version is version_compare('3.0.0', '<') %}python-pip{% else %}python3-pip{% endif %}"
 
 python_sni_support_packages:
   - python-dev
