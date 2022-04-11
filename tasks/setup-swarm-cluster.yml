@@ -9,8 +9,8 @@
       com.docker.network.bridge.name: docker_gwbridge
     ipam_options:
       subnet: "{{ docker_swarm_network }}"
-      gateway: "{{ docker_swarm_network | ipaddr('net') | ipaddr('1') | ipaddr('ip') }}"
-  when: docker_swarm_network is defined and docker_swarm_network | ipaddr('net')
+      gateway: "{{ docker_swarm_network | ansible.netcommon.ipaddr('net') | ansible.netcommon.ipaddr('1') | ansible.netcommon.ipaddr('ip') }}"
+  when: docker_swarm_network is defined and docker_swarm_network | ansible.netcommon.ipaddr('net')
 
 - name: Check if "Swarm Mode" is enabled.
   shell: docker info
