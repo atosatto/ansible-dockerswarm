@@ -1,0 +1,182 @@
+---
+##
+# check prerequisites
+- name: Create certificate directory
+  file: path="{{ docker_api_certs_docker_cert_path }}" state=directory recurse=yes owner=root group=root mode=0755
+  become: True
+
+- name: Create CA certificate directory
+  file: path="{{ docker_api_certs_docker_cert_path }}/ca" state=directory recurse=yes owner=root group=root mode=0755
+  become: True
+
+- name: Create client certificate directory
+  file: path="{{ docker_api_certs_docker_cert_path }}/client" state=directory recurse=yes owner=root group=root mode=0755
+  become: True
+
+- name: Install OpenSSL
+  package:
+    name: openssl
+    state: present
+  become: True
+
+##
+# Gen cert files
+- name: copy openssl configuration
+  template:
+    src: templates/openssl.cnf.j2
+    dest: "{{ docker_api_certs_docker_cert_path }}/openssl-ca.cnf"
+    owner: root
+    group: root
+    mode: 0644
+  when: inventory_hostname == groups['docker_swarm_manager'][0] and docker_api_certs_cert_gen
+  run_once: True
+  become: True
+
+- name: generate CA private key
+  command: openssl genrsa -out {{ docker_api_certs_docker_cert_path }}/ca/ca-key.pem 2048
+  when: inventory_hostname == groups['docker_swarm_manager'][0] and docker_api_certs_cert_gen
+  run_once: True
+  become: True
+
+- name: generate CA public key
+  command: |
+    openssl req -config {{ docker_api_certs_docker_cert_path }}/openssl-ca.cnf -new -x509 \
+    -days {{ docker_api_certs_docker_certificate_validity }} \
+    -key {{ docker_api_certs_docker_cert_path }}/ca/ca-key.pem -sha256 \
+    -out {{ docker_api_certs_docker_cert_path }}/ca.pem
+  when: inventory_hostname == groups['docker_swarm_manager'][0] and docker_api_certs_cert_gen
+  run_once: True
+  become: True
+
+- name: generate private keys
+  command: openssl genrsa -out {{ docker_api_certs_docker_cert_path }}/{{ docker_api_certs_key_name }} 2048
+  when: inventory_hostname == groups['docker_swarm_manager'][0] and docker_api_certs_cert_gen
+  run_once: True
+  notify: restart docker
+  become: True
+
+- name: generate server csr (server.csr)
+  command: |
+    openssl req -subj "/CN={{ docker_api_certs_openssl_domain }}" -sha256 -new \
+    -key {{ docker_api_certs_docker_cert_path }}/{{ docker_api_certs_key_name }} \
+    -out {{ docker_api_certs_docker_cert_path }}/server.csr
+  when: inventory_hostname == groups['docker_swarm_manager'][0] and docker_api_certs_cert_gen
+  run_once: True
+  become: True
+
+- name: generate public key
+  command: |
+    openssl x509 -req -days {{ docker_api_certs_docker_certificate_validity }} -sha256 \
+    -in {{ docker_api_certs_docker_cert_path }}/server.csr \
+    -CA {{ docker_api_certs_docker_cert_path }}/{{ docker_api_certs_ca_name }} \
+    -CAkey {{ docker_api_certs_docker_cert_path }}/ca/ca-key.pem \
+    -CAcreateserial -out {{ docker_api_certs_docker_cert_path }}/{{ docker_api_certs_cert_name }} \
+    -extfile {{ docker_api_certs_docker_cert_path }}/openssl-ca.cnf
+  when: inventory_hostname == groups['docker_swarm_manager'][0] and docker_api_certs_cert_gen
+  run_once: True
+  notify: restart docker
+  become: True
+
+- name: generate client key
+  command: openssl genrsa -out {{ docker_api_certs_docker_cert_path }}/client/client-{{ docker_api_certs_key_name }} 2048
+  when: inventory_hostname == groups['docker_swarm_manager'][0] and docker_api_certs_cert_gen
+  run_once: True
+  notify: restart docker
+  become: True
+
+- name: generate client csr (cert.csr)
+  command: |
+    openssl req -subj '/CN=client' -new \
+    -key {{ docker_api_certs_docker_cert_path }}/client/client-{{ docker_api_certs_key_name }} \
+    -out {{ docker_api_certs_docker_cert_path }}/client/client.csr
+  when: inventory_hostname == groups['docker_swarm_manager'][0] and docker_api_certs_cert_gen
+  run_once: True
+  become: True
+
+- name: Generate client crt
+  shell: |
+    echo extendedKeyUsage = clientAuth > {{ docker_api_certs_docker_cert_path }}/client/extfile.cnf \
+    && openssl x509 -req -days {{ docker_api_certs_docker_certificate_validity }} -sha256 \
+       -in {{ docker_api_certs_docker_cert_path }}/client/client.csr \
+       -CA {{ docker_api_certs_docker_cert_path }}/{{ docker_api_certs_ca_name }} \
+       -CAkey {{ docker_api_certs_docker_cert_path }}/ca/ca-key.pem -CAcreateserial \
+       -out {{ docker_api_certs_docker_cert_path }}/client/client-{{ docker_api_certs_cert_name }} \
+       -extfile {{ docker_api_certs_docker_cert_path }}/client/extfile.cnf
+  when: inventory_hostname == groups['docker_swarm_manager'][0] and docker_api_certs_cert_gen
+  run_once: True
+  become: True
+
+##
+# Get cert files if exist
+- name: get {{ docker_api_certs_ca_name }} from {{ groups['docker_swarm_manager'][0] }}
+  slurp:
+    src: "{{ docker_api_certs_docker_cert_path }}/{{ docker_api_certs_ca_name }}"
+  delegate_to: "{{ groups['docker_swarm_manager'][0] }}"
+  register: docker_api_certs_ca
+  run_once: True
+  become: True
+
+- name: get {{ docker_api_certs_cert_name }} from {{ groups['docker_swarm_manager'][0] }}
+  slurp:
+    src: "{{ docker_api_certs_docker_cert_path }}/{{ docker_api_certs_cert_name }}"
+  delegate_to: "{{ groups['docker_swarm_manager'][0] }}"
+  register: docker_api_certs_cert
+  run_once: True
+  become: True
+
+- name: get ca.pem from {{ groups['docker_swarm_manager'][0] }}
+  slurp:
+    src: "{{ docker_api_certs_docker_cert_path }}/{{ docker_api_certs_key_name }}"
+  delegate_to: "{{ groups['docker_swarm_manager'][0] }}"
+  register: docker_api_certs_key
+  run_once: True
+  become: True
+
+##
+# Push cert files if don't exist
+- name: write ca.pem
+  copy:
+    dest: "{{ docker_api_certs_docker_cert_path }}/{{ docker_api_certs_ca_name }}"
+    content: "{{ docker_api_certs_ca['content'] | b64decode }}"
+    owner: root
+    group: root
+    mode: 0644
+  when: inventory_hostname != groups['docker_swarm_manager'][0]
+  notify: restart docker
+  become: True
+
+- name: write cert.pem
+  copy:
+    dest: "{{ docker_api_certs_docker_cert_path }}/{{ docker_api_certs_cert_name }}"
+    content: "{{ docker_api_certs_cert['content'] | b64decode }}"
+    owner: root
+    group: root
+    mode: 0644
+  when: inventory_hostname != groups['docker_swarm_manager'][0]
+  notify: restart docker
+  become: True
+
+- name: write key.pem
+  copy:
+    dest: "{{ docker_api_certs_docker_cert_path }}/{{ docker_api_certs_key_name }}"
+    content: "{{ docker_api_certs_key['content'] | b64decode }}"
+    owner: root
+    group: root
+    mode: 0644
+  when: inventory_hostname != groups['docker_swarm_manager'][0]
+  notify: restart docker
+  become: True
+
+##
+# get a local copy of certs
+
+- name: get certs to localdir from {{ groups['docker_swarm_manager'][0] }}
+  fetch:
+    src: "{{ docker_api_certs_docker_cert_path }}/{{ item }}"
+    dest: "{{ docker_api_certs_docker_local_cert_path }}/"
+  with_items:
+    - "{{ docker_api_certs_ca_name }}"
+    - "{{ docker_api_certs_cert_name }}"
+    - "{{ docker_api_certs_key_name }}"
+  when: docker_api_certs_docker_local_cert_path is defined and inventory_hostname == groups['docker_swarm_manager'][0]
+  become: True
