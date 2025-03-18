@@ -1,16 +1,16 @@
 ---
 
-- name: Create a custom Swarm network.
+- name: Create a custom Swarm network
   docker_network:
     name: docker_gwbridge
     driver_options:
       com.docker.network.bridge.enable_icc: "false"
       com.docker.network.bridge.enable_ip_masquerade: "true"
       com.docker.network.bridge.name: docker_gwbridge
-    ipam_options:
-      subnet: "{{ docker_swarm_network }}"
-      gateway: "{{ docker_swarm_network | ipaddr('net') | ipaddr('1') | ipaddr('ip') }}"
-  when: docker_swarm_network is defined and docker_swarm_network | ipaddr('net')
+    ipam_config:
+      - subnet: "{{ docker_swarm_network }}"
+        gateway: "{{ docker_swarm_network | ansible.utils.ipaddr('net') | ansible.utils.ipaddr('1') | ansible.utils.ipaddr('ip') }}"
+  when: docker_swarm_network is defined and docker_swarm_network | ansible.utils.ipaddr('net')
 
 - name: Check if "Swarm Mode" is enabled.
   shell: docker info
@@ -22,7 +22,7 @@
 - name: Init "Swarm Mode" on the first manager.
   shell: docker swarm init
         --listen-addr {{ docker_swarm_addr }}:{{ docker_swarm_port }}
-        --advertise-addr {{ docker_swarm_addr }}
+        --advertise-addr {{ docker_swarm_addr }} {{ docker_swarm_init_extra_options }}
   when: "docker_info.stdout.find('Swarm: active') == -1
     and inventory_hostname == groups['docker_swarm_manager'][0]"
   tags:

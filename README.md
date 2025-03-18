@@ -150,12 +150,17 @@ Listen port for the Swarm raft API.
     skip_engine: false
     skip_cli: false
     skip_swarm: false
+    skip_swarm_cert: false
     skip_group: false
     skip_docker_py: false
     skip_docker_compose: false
 
 Switches allowing to disable specific functionalities of the role.
 If you want to use this role to install `docker-engine` without enabling `swarm-mode` set `skip_swarm: true`.
+
+If you want to use this role to gen API certs, set `skip_swarm_cert: true`
+
+If you want to keep certs to local folder, set `docker_api_certs_docker_local_cert_path: /your/local/path`
 
 Swarm node labels
 -----------------
