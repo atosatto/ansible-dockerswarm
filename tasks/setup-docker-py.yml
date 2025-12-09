@@ -1,7 +1,20 @@
 ---
+# - name: Ensure python3-psutil is installed
+#   ansible.builtin.package:
+#     name: python3-psutil
+#     state: present
 
-- name: Install docker-py.
+# Debian/Ubuntu: install from apt #REVIEW THIS STEP!!!
+- name: Install docker-py via apt
+  package:
+    name: python3-docker
+    state: present
+  when: ansible_os_family == 'Debian'
+
+# RHEL/CentOS: use pip
+- name: Install docker-py via pip
   pip:
     name: "{{ docker_py_package_name }}"
     version: "{{ docker_py_package_version }}"
     state: "{{ docker_py_package_state }}"
+  when: ansible_os_family != 'Debian'
