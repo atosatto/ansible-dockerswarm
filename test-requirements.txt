@@ -2,4 +2,4 @@ molecule==2.22.0
 docker==4.2.0
 
 # see https://github.com/ansible-community/molecule/pull/2682
-sh==1.12.14
+sh==2.2.4
